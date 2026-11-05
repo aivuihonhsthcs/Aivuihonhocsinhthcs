@@ -146,10 +146,14 @@ function paint(k){
 }
 function tabsRender(){$("#tabs").innerHTML=TABS.map(t=>`<button class="${S.tab===t[0]?"on":""}" onclick="go('${t[0]}')"><span>${t[1]}</span>${t[2]}</button>`).join("")}
 function go(t){if(t==="game"){openGame();return}S.tab=t;render()}
-async function openGame(){ // chuyển sang game, kèm phiên đăng nhập (chỉ access token, trong phần # nên không gửi lên máy chủ)
-  const u=CFG.GAME_URL;if(!u||u.includes("example.com"))return alert("Chưa cấu hình GAME_URL trong config.js");
+async function openSite(u){ // mở web khác (game, môn học) kèm phiên đăng nhập; chỉ gửi access token trong phần #
+  if(!u||u.includes("example.com"))return alert("Chưa cấu hình địa chỉ trong config.js");
   const {data:{session}}=await sb.auth.getSession();
   location.href=session?u+"#at="+encodeURIComponent(session.access_token):u}
+const openGame=()=>openSite(CFG.GAME_URL);
+function subjectsCard(){
+  const L=CFG.SUBJECTS||[];if(!L.length)return "";
+  return `<div class="card"><h3>📚 Học cùng</h3><div class="chips">${L.map((x,i)=>`<button class="chip" onclick="openSite(CFG.SUBJECTS[${i}].url)">${esc(x.icon||"📘")} ${esc(x.name)}</button>`).join("")}</div></div>`}
 function render(){tabsRender();$("#chatbar").style.display=S.tab==="chat"?"flex":"none";({mine:mineView,assign:assignView,chat:chatView,me:meView})[S.tab]()}
 /* ---------- Việc của tôi ---------- */
 const myTasks=u=>S.tasks.filter(t=>t.assignee===u);
@@ -186,7 +190,8 @@ function mineView(){
   <div class="card"><h3>Việc của bạn</h3>${day.map(t=>taskRow(t)).join("")||'<div class="mu">Hôm nay không có việc 🎉</div>'}</div>
   <div class="card"><h3>🏠 Việc của nhà</h3><div class="chips"><button class="chip ${f==="all"&&!S.showRes?"on":""}" onclick="S.filter='all';S.showRes=false;mineView()">Tất cả</button>
   ${S.users.map(u=>`<button class="chip ${f===u.id&&!S.showRes?"on":""}" onclick="S.filter='${u.id}';S.showRes=false;mineView()">${av(u)} ${esc(u.name)}${u.role==="parent"?" (PH)":""}</button>`).join("")}
-  <button class="chip ${S.showRes?"on":""}" onclick="S.showRes=true;mineView()">📊 Kết quả Tự học</button></div>${house}</div>`;
+  <button class="chip ${S.showRes?"on":""}" onclick="S.showRes=true;mineView()">📊 Kết quả Tự học</button></div>${house}</div>
+  ${subjectsCard()}`;
 }
 /* ---------- Giao việc ---------- */
 function assignView(){
