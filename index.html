@@ -145,7 +145,11 @@ function paint(k){
   if(S.tab==="mine"||(S.tab==="assign"&&k==="tasks"&&!document.activeElement.matches("input,select")))render();
 }
 function tabsRender(){$("#tabs").innerHTML=TABS.map(t=>`<button class="${S.tab===t[0]?"on":""}" onclick="go('${t[0]}')"><span>${t[1]}</span>${t[2]}</button>`).join("")}
-function go(t){if(t==="game"){window.open(CFG.GAME_URL||"#","_blank");return}S.tab=t;render()}
+function go(t){if(t==="game"){openGame();return}S.tab=t;render()}
+async function openGame(){ // chuyển sang game, kèm phiên đăng nhập (chỉ access token, trong phần # nên không gửi lên máy chủ)
+  const u=CFG.GAME_URL;if(!u||u.includes("example.com"))return alert("Chưa cấu hình GAME_URL trong config.js");
+  const {data:{session}}=await sb.auth.getSession();
+  location.href=session?u+"#at="+encodeURIComponent(session.access_token):u}
 function render(){tabsRender();$("#chatbar").style.display=S.tab==="chat"?"flex":"none";({mine:mineView,assign:assignView,chat:chatView,me:meView})[S.tab]()}
 /* ---------- Việc của tôi ---------- */
 const myTasks=u=>S.tasks.filter(t=>t.assignee===u);
