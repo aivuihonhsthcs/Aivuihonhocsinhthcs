@@ -41,7 +41,7 @@ button.d{background:var(--bad)}
 .msg{max-width:80%;margin:6px 0;padding:8px 12px;border-radius:14px;background:var(--card);border:1px solid var(--bd);word-break:break-word}
 .msg.me{margin-left:auto;background:var(--pr);color:#fff;border-color:var(--pr)}
 .msg small{display:block;opacity:.7;font-size:11px}
-.av{font-size:56px;text-align:center}.av2{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.av2 button{background:var(--bg);font-size:22px;padding:6px 10px}
+.av{font-size:56px;text-align:center}.avi{width:26px;height:26px;border-radius:50%;object-fit:cover;vertical-align:middle}.avl{width:96px;height:96px;border-radius:50%;object-fit:cover;display:block;margin:0 auto}.zc{font:700 28px/1.2 ui-monospace,monospace;letter-spacing:4px;text-align:center;padding:10px;border:2px dashed var(--pr);border-radius:12px;margin:8px 0}.av2{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.av2 button{background:var(--bg);font-size:22px;padding:6px 10px}
 #auth{max-width:420px;margin:auto;padding:24px 16px}
 .err{color:var(--bad);min-height:20px;font-size:13px}
 </style></head><body>
@@ -67,6 +67,7 @@ const hm=s=>s?s.slice(0,5):"";
 const S={me:null,house:null,users:[],tasks:[],msgs:[],date:today(),tab:"mine",filter:"all",showRes:false,ch:null};
 const isP=()=>S.me&&S.me.role==="parent";
 const nm=id=>{const x=S.users.find(y=>y.id===id);return x?x.name||x.username:"?"};
+const av=(u,big)=>u.avatar_url?`<img class="${big?"avl":"avi"}" src="${esc(u.avatar_url)}" alt="">`:esc(u.avatar||"😀");
 const students=()=>S.users.filter(u=>u.role==="student");
 let sb=null;
 
@@ -140,6 +141,7 @@ async function load(k){
 function paint(k){
   if(!S.me)return;
   if(S.tab==="chat")return k==="msgs"||k==="users"?chatView():0;
+  if(S.tab==="me")return k==="users"&&!document.activeElement.matches("input")?meView():0;
   if(S.tab==="mine"||(S.tab==="assign"&&k==="tasks"&&!document.activeElement.matches("input,select")))render();
 }
 function tabsRender(){$("#tabs").innerHTML=TABS.map(t=>`<button class="${S.tab===t[0]?"on":""}" onclick="go('${t[0]}')"><span>${t[1]}</span>${t[2]}</button>`).join("")}
@@ -169,7 +171,7 @@ function mineView(){
   if(S.showRes){
     house=students().map(s=>{const a=myTasks(s.id),n=a.filter(t=>t.done).length,late=a.filter(t=>t.task_date<t0&&!t.done).length;
       const by={};a.forEach(t=>{const k=t.subject||"Khác";by[k]=by[k]||[0,0];by[k][1]++;if(t.done)by[k][0]++});
-      return `<div class="task"><div style="font-size:26px">${esc(s.avatar||"😀")}</div><div style="flex:1"><b>${esc(s.name)}</b> — ${n}/${a.length} xong (${a.length?Math.round(n/a.length*100):0}%)${late?` <span class="warn">· ${late} quá hạn</span>`:""}
+      return `<div class="task"><div style="font-size:26px">${av(s)}</div><div style="flex:1"><b>${esc(s.name)}</b> — ${n}/${a.length} xong (${a.length?Math.round(n/a.length*100):0}%)${late?` <span class="warn">· ${late} quá hạn</span>`:""}
       <div class="mu">${Object.entries(by).map(([k,v])=>k+": "+v[0]+"/"+v[1]).join(" · ")||"Chưa có việc"}</div></div></div>`}).join("")||'<div class="mu">Chưa có học sinh.</div>';
   }else{
     house=S.tasks.filter(t=>t.task_date===S.date&&(f==="all"||t.assignee===f)).sort((a,b)=>(a.time_from||"").localeCompare(b.time_from||"")).map(t=>taskRow(t,false,true)).join("")||'<div class="mu">Không có việc.</div>';
@@ -179,7 +181,7 @@ function mineView(){
   ${back.length?`<div class="card"><h3 class="warn">⚠️ Còn tồn (${back.length})</h3>${back.map(t=>taskRow(t,true)).join("")}</div>`:""}
   <div class="card"><h3>Việc của bạn</h3>${day.map(t=>taskRow(t)).join("")||'<div class="mu">Hôm nay không có việc 🎉</div>'}</div>
   <div class="card"><h3>🏠 Việc của nhà</h3><div class="chips"><button class="chip ${f==="all"&&!S.showRes?"on":""}" onclick="S.filter='all';S.showRes=false;mineView()">Tất cả</button>
-  ${S.users.map(u=>`<button class="chip ${f===u.id&&!S.showRes?"on":""}" onclick="S.filter='${u.id}';S.showRes=false;mineView()">${esc(u.avatar||"😀")} ${esc(u.name)}${u.role==="parent"?" (PH)":""}</button>`).join("")}
+  ${S.users.map(u=>`<button class="chip ${f===u.id&&!S.showRes?"on":""}" onclick="S.filter='${u.id}';S.showRes=false;mineView()">${av(u)} ${esc(u.name)}${u.role==="parent"?" (PH)":""}</button>`).join("")}
   <button class="chip ${S.showRes?"on":""}" onclick="S.showRes=true;mineView()">📊 Kết quả Tự học</button></div>${house}</div>`;
 }
 /* ---------- Giao việc ---------- */
@@ -192,7 +194,7 @@ function assignView(){
   <input id="gd" type="date" value="${S.date}">
   <div class="row"><input id="gf" type="time" value="19:00"><input id="gto" type="time" value="20:00"></div>
   <div class="mu" style="margin-bottom:4px">Giao cho</div>
-  <div class="chk">${cand.map(u=>`<label><input type="checkbox" class="gu" value="${u.id}" ${u.id===me?"checked":""}>${esc(u.avatar||"😀")} ${esc(u.name)}</label>`).join("")||'<span class="mu">Chưa có học sinh nào trong nhà. Hãy chia sẻ mã nhà.</span>'}</div>
+  <div class="chk">${cand.map(u=>`<label><input type="checkbox" class="gu" value="${u.id}" ${u.id===me?"checked":""}>${av(u)} ${esc(u.name)}</label>`).join("")||'<span class="mu">Chưa có học sinh nào trong nhà. Hãy chia sẻ mã nhà.</span>'}</div>
   <select id="gr"><option value="0">Không lặp</option><option value="d">Hằng ngày (7 ngày)</option><option value="w">Hằng tuần (4 tuần)</option></select>
   <div class="err" id="ge"></div><button style="width:100%" onclick="addTask()">Giao việc</button></div>
   <div class="card"><h3>Việc tôi đã giao</h3>${mine.map(t=>`<div class="task"><div style="flex:1"><div>${esc(t.title)}</div><div class="mu"><span class="tag">${esc(t.subject||"")}</span>${t.lesson?esc(t.lesson)+" · ":""}${fd(t.task_date)} · ${hm(t.time_from)}–${hm(t.time_to)}</div>
@@ -221,19 +223,51 @@ async function send(){
 }
 $("#cs").onclick=send;$("#ci").onkeydown=e=>{if(e.key==="Enter")send()};
 /* ---------- Hồ sơ ---------- */
+const hhmm=d=>new Date(d).toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"});
+function zaloCard(){
+  const m=S.me,z=S.zc,live=z&&new Date(z.expires_at)>new Date();
+  if(m.zalo_user_id)return `<div class="card"><h3>💙 Liên kết Zalo</h3><div class="okt">✅ Đã liên kết Zalo</div><div class="mu" style="margin:6px 0">Bạn sẽ nhận nhắc việc qua bot Zalo.</div><button class="g" onclick="zUnlink()">Hủy liên kết</button><div class="err" id="ze"></div></div>`;
+  if(live)return `<div class="card"><h3>💙 Liên kết Zalo</h3><div class="mu">1) Mở Zalo, nhắn cho bot <b>${esc(CFG.ZALO_BOT_NAME||"bot của nhà")}</b>${CFG.ZALO_BOT_URL?` (<a href="${esc(CFG.ZALO_BOT_URL)}" target="_blank" rel="noopener">mở bot</a>)`:""}<br>2) Gửi đúng tin nhắn dưới đây:</div>
+  <div class="zc">LK ${esc(z.code)}</div><div class="mu">Mã hết hạn lúc ${hhmm(z.expires_at)}. Khi bot xác nhận, trạng thái ở đây tự đổi thành "Đã liên kết".</div>
+  <div class="row" style="margin-top:8px"><button class="g" onclick="zNew()">Tạo mã mới</button><button class="g" onclick="navigator.clipboard&&navigator.clipboard.writeText('LK ${esc(z.code)}')">Sao chép</button></div><div class="err" id="ze"></div></div>`;
+  return `<div class="card"><h3>💙 Liên kết Zalo</h3><div class="mu" style="margin-bottom:8px">Chưa liên kết. Bấm nút để lấy mã, rồi gửi mã cho bot Zalo.</div><button style="width:100%" onclick="zNew()">Tạo mã liên kết</button><div class="err" id="ze"></div></div>`;
+}
 function meView(){
   const m=S.me;
-  main.innerHTML=`<div class="card"><div class="av">${esc(m.avatar||"😀")}</div><div class="av2">${AVS.map(a=>`<button onclick="setAv('${a}')">${a}</button>`).join("")}</div>
+  if(!S.zl&&!m.zalo_user_id){S.zl=1;sb.rpc("zalo_code",{p_new:false}).then(r=>{S.zc=r.data;if(S.tab==="me")meView()})}
+  main.innerHTML=`<div class="card"><div class="av">${m.avatar_url?av(m,1):esc(m.avatar||"😀")}</div>
+  <div class="row" style="margin:10px 0"><button onclick="$('#af').click()">📷 Đổi ảnh</button>${m.avatar_url?'<button class="g" onclick="rmAv()">Xóa ảnh</button>':""}</div>
+  <input id="af" type="file" accept="image/*" hidden onchange="pickAv(this)">
+  <div class="err" id="ame"></div>
+  <div class="mu" style="text-align:center">Hoặc chọn biểu tượng:</div><div class="av2">${AVS.map(a=>`<button onclick="setAv('${a}')">${a}</button>`).join("")}</div>
   <div class="mu" style="text-align:center;margin-top:6px">${isP()?"Phụ huynh":"Học sinh"} · @${esc(m.username)}</div></div>
-  <div class="card"><h3>Thông tin</h3><input id="pn" placeholder="Tên hiển thị" value="${esc(m.name)}"><input id="pb" type="date" value="${esc(m.birth||"")}"><input id="pz" placeholder="Liên kết Zalo (số điện thoại hoặc link)" value="${esc(m.zalo||"")}">
+  <div class="card"><h3>Thông tin</h3><input id="pn" placeholder="Tên hiển thị" value="${esc(m.name)}"><input id="pb" type="date" value="${esc(m.birth||"")}">
   <button style="width:100%" onclick="saveInfo()">Lưu</button><div class="okt" id="pm"></div></div>
+  ${zaloCard()}
   ${isP()?`<div class="card"><h3>🏠 Mã nhà</h3><div class="mu">Học sinh dùng mã này để đăng ký vào nhà bạn.</div><input id="hc" value="${esc(S.house.code)}" autocapitalize="characters"><button style="width:100%" onclick="saveCode()">Đổi mã nhà</button><div class="err" id="hm"></div></div>`:`<div class="card mu">🏠 Mã nhà: <b>${esc(S.house.code)}</b></div>`}
   <div class="card"><h3>Đổi mật khẩu</h3><input id="n1" type="password" placeholder="Mật khẩu mới" autocomplete="new-password"><input id="n2" type="password" placeholder="Nhập lại mật khẩu mới" autocomplete="new-password"><button style="width:100%" onclick="chPw()">Đổi mật khẩu</button><div class="err" id="pe"></div></div>
   <button class="d" style="width:100%" onclick="logout()">Đăng xuất</button>`;
 }
 const upd=o=>sb.from("profiles").update(o).eq("id",S.me.id);
-async function setAv(a){await upd({avatar:a});S.me.avatar=a;meView()}
-async function saveInfo(){const {error}=await upd({name:$("#pn").value.trim()||S.me.username,birth:$("#pb").value||null,zalo:$("#pz").value.trim()});$("#pm").textContent=error?"Lỗi: "+error.message:"Đã lưu ✓"}
+function resizeImg(f,n){return new Promise((ok,no)=>{const u=URL.createObjectURL(f),i=new Image();
+  i.onload=()=>{const c=document.createElement("canvas");c.width=c.height=n;const k=Math.min(i.width,i.height),x=(i.width-k)/2,y=(i.height-k)/2;
+    c.getContext("2d").drawImage(i,x,y,k,k,0,0,n,n);URL.revokeObjectURL(u);c.toBlob(b=>b?ok(b):no(new Error("Không xử lý được ảnh")),"image/jpeg",.85)};
+  i.onerror=()=>no(new Error("Không đọc được ảnh (hãy chọn JPG/PNG)"));i.src=u})}
+async function pickAv(inp){
+  const f=inp.files[0];if(!f)return;const e=$("#ame");e.className="mu";e.textContent="Đang tải ảnh lên…";
+  try{
+    const blob=await resizeImg(f,256),path=S.me.id+"/avatar.jpg";
+    const {error}=await sb.storage.from("avatars").upload(path,blob,{upsert:true,contentType:"image/jpeg"});if(error)throw error;
+    const url=sb.storage.from("avatars").getPublicUrl(path).data.publicUrl+"?v="+Date.now();
+    const {error:e2}=await upd({avatar_url:url});if(e2)throw e2;
+    S.me.avatar_url=url;meView();
+  }catch(x){e.className="err";e.textContent="Lỗi: "+(x.message||x)}
+}
+async function rmAv(){await sb.storage.from("avatars").remove([S.me.id+"/avatar.jpg"]);await upd({avatar_url:null});S.me.avatar_url=null;meView()}
+async function setAv(a){await upd({avatar:a,avatar_url:null});S.me.avatar=a;S.me.avatar_url=null;meView()}
+async function saveInfo(){const {error}=await upd({name:$("#pn").value.trim()||S.me.username,birth:$("#pb").value||null});$("#pm").textContent=error?"Lỗi: "+error.message:"Đã lưu ✓"}
+async function zNew(){const {data,error}=await sb.rpc("zalo_code",{p_new:true});if(error)return $("#ze").textContent="Lỗi: "+error.message;S.zc=data;meView()}
+async function zUnlink(){if(!confirm("Hủy liên kết Zalo?"))return;await sb.rpc("zalo_unlink");S.zc=null;S.zl=0;await load("users");meView()}
 async function saveCode(){
   const c=$("#hc").value.toUpperCase().replace(/[^A-Z0-9]/g,""),e=$("#hm");e.className="err";e.textContent="";
   if(c.length<4)return e.textContent="Mã tối thiểu 4 ký tự.";
@@ -246,6 +280,6 @@ async function chPw(){
   const {error}=await sb.auth.updateUser({password:a});
   if(error)return e.textContent=error.message;
   e.className="okt";e.textContent="Đã đổi mật khẩu ✓";$("#n1").value=$("#n2").value=""}
-async function logout(){await sb.auth.signOut();S.me=null;authView()}
+async function logout(){await sb.auth.signOut();S.me=null;S.zc=null;S.zl=0;authView()}
 boot();
 </script></body></html>
