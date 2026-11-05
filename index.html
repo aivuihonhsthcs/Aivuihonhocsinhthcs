@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ai vui hơn học sinh THCS</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1d2433;--mu:#6b7488;--pr:#4f46e5;--ok:#16a34a;--okbg:#dcfce7;--bad:#dc2626;--bd:#e3e7f0}
+@media (prefers-color-scheme:dark){:root{--bg:#12141c;--card:#1c2030;--tx:#e8ebf5;--mu:#9aa3ba;--pr:#818cf8;--ok:#4ade80;--okbg:#14351f;--bad:#f87171;--bd:#2c3248}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+#main{flex:1;overflow-y:auto;padding:12px 12px 16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:12px}
+h3{margin:0 0 8px;font-size:15px}
+input,select,button{font:inherit;color:var(--tx)}
+input,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);margin-bottom:8px}
+button{border:0;border-radius:10px;padding:10px 14px;background:var(--pr);color:#fff;cursor:pointer}
+button.g{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}
+button.d{background:var(--bad)}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.mu{color:var(--mu);font-size:13px}
+.nav{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.nav .t{flex:1;text-align:center;font-weight:600}.nav button{flex:none;padding:8px 12px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:12px}
+.day{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:6px 0;text-align:center;font-size:12px;cursor:pointer}
+.day b{display:block;font-size:15px}.day.ok{background:var(--okbg);border-color:var(--ok)}.day.sel{outline:2px solid var(--pr)}
+.task{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--bd)}
+.task:first-of-type{border-top:0}.task input{width:22px;height:22px;margin:2px 0 0;flex:none}
+.task.done .ti{text-decoration:line-through;color:var(--mu)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px}
+.chip{flex:none;padding:6px 12px;border-radius:99px;background:var(--bg);border:1px solid var(--bd);color:var(--tx)}
+.chip.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--bg);border:1px solid var(--bd);margin-right:4px}
+.okt{color:var(--ok);font-weight:600}.warn{color:var(--bad)}
+.chk{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.chk label{display:flex;gap:6px;align-items:center;padding:6px 10px;border:1px solid var(--bd);border-radius:99px}
+.chk input{width:auto;margin:0}
+#tabs{display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+#tabs button{flex:1;background:none;color:var(--mu);border-radius:0;padding:8px 2px;font-size:11px}
+#tabs button span{display:block;font-size:20px}#tabs button.on{color:var(--pr);font-weight:600}
+#chatbar{display:none;gap:8px;padding:8px;background:var(--card);border-top:1px solid var(--bd)}
+#chatbar input{margin:0}#chatbar button{flex:none}
+.msg{max-width:80%;margin:6px 0;padding:8px 12px;border-radius:14px;background:var(--card);border:1px solid var(--bd);word-break:break-word}
+.msg.me{margin-left:auto;background:var(--pr);color:#fff;border-color:var(--pr)}
+.msg small{display:block;opacity:.7;font-size:11px}
+.av{font-size:56px;text-align:center}.av2{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.av2 button{background:var(--bg);font-size:22px;padding:6px 10px}
+#auth{max-width:420px;margin:auto;padding:24px 16px}
+.err{color:var(--bad);min-height:20px;font-size:13px}
+</style></head><body>
+<div id="main"></div>
+<div id="chatbar"><input id="ci" placeholder="Nhập tin nhắn…" autocomplete="off"><button id="cs">Gửi</button></div>
+<div id="tabs" style="display:none"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+const CFG=window.APP_CONFIG||{};
+const SUBJ=["Toán","Ngữ văn","Tiếng Anh","KHTN","Lịch sử & Địa lý","GDCD","Tin học","Công nghệ","Khác"];
+const AVS=["😀","😎","🤓","🦊","🐼","🐯","🦄","🐸","🚀","⚽","🎨","📚"];
+const TABS=[["mine","📋","Việc của tôi"],["assign","➕","Giao việc"],["chat","💬","Chat"],["game","🎮","Giải trí"],["me","👤","Hồ sơ"]];
+const MAILDOM="@avh-hocsinh.app";
+const $=s=>document.querySelector(s),main=$("#main");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0"),ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const pd=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+const addD=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return ymd(d)};
+const today=()=>ymd(new Date()),DN=["CN","T2","T3","T4","T5","T6","T7"];
+const fd=s=>{const d=pd(s);return DN[d.getDay()]+", "+pad(d.getDate())+"/"+pad(d.getMonth()+1)};
+const hm=s=>s?s.slice(0,5):"";
+const S={me:null,house:null,users:[],tasks:[],msgs:[],date:today(),tab:"mine",filter:"all",showRes:false,ch:null};
+const isP=()=>S.me&&S.me.role==="parent";
+const nm=id=>{const x=S.users.find(y=>y.id===id);return x?x.name||x.username:"?"};
+const students=()=>S.users.filter(u=>u.role==="student");
+let sb=null;
+
+async function boot(){
+  if(!window.supabase||!CFG.SUPABASE_URL||CFG.SUPABASE_URL.includes("YOUR-")){
+    main.innerHTML='<div class="card">⚙️ Chưa cấu hình. Điền <b>SUPABASE_URL</b> và <b>SUPABASE_ANON_KEY</b> trong <code>config.js</code> (xem README).</div>';return}
+  sb=supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY);
+  const {data:{session}}=await sb.auth.getSession();
+  if(session&&await enter())return;
+  authView();
+}
+function authView(mode="login"){
+  if(S.ch){sb.removeChannel(S.ch);S.ch=null}
+  $("#tabs").style.display="none";$("#chatbar").style.display="none";
+  const reg=mode!=="login";
+  main.innerHTML=`<div id="auth"><h2 style="text-align:center">🎒 Ai vui hơn học sinh THCS</h2><div class="card">
+  <div class="chips"><button class="chip ${mode==="login"?"on":""}" onclick="authView('login')">Đăng nhập</button><button class="chip ${mode==="st"?"on":""}" onclick="authView('st')">Học sinh đăng ký</button><button class="chip ${mode==="pa"?"on":""}" onclick="authView('pa')">Phụ huynh đăng ký</button></div>
+  <input id="au" placeholder="Tên đăng nhập (a-z, 0-9)" autocapitalize="off" autocomplete="username">
+  ${reg?'<input id="an" placeholder="Tên hiển thị">':""}
+  <input id="ap" type="password" placeholder="Mật khẩu" autocomplete="${reg?"new-password":"current-password"}">
+  ${reg?'<input id="ap2" type="password" placeholder="Nhập lại mật khẩu">':""}
+  ${mode==="st"?'<input id="ac" placeholder="Mã nhà do phụ huynh cấp" autocapitalize="characters">':""}
+  ${mode==="pa"?'<input id="ac" placeholder="Đặt mã nhà (VD: NHA2026)" autocapitalize="characters">':""}
+  <div class="err" id="ae"></div><button style="width:100%" id="ab" onclick="doAuth('${mode}')">${reg?"Đăng ký":"Đăng nhập"}</button></div></div>`;
+}
+async function doAuth(mode){
+  const e=$("#ae"),b=$("#ab"),u=$("#au").value.toLowerCase().replace(/[^a-z0-9_]/g,""),p=$("#ap").value;e.textContent="";
+  if(u.length<3)return e.textContent="Tên đăng nhập tối thiểu 3 ký tự (a-z, 0-9).";
+  if(p.length<6)return e.textContent="Mật khẩu tối thiểu 6 ký tự.";
+  b.disabled=true;
+  try{
+    if(mode==="login"){
+      const {error}=await sb.auth.signInWithPassword({email:u+MAILDOM,password:p});
+      if(error)throw new Error("Sai tên đăng nhập hoặc mật khẩu.");
+    }else{
+      if(p!==$("#ap2").value)throw new Error("Mật khẩu nhập lại không khớp.");
+      const code=$("#ac").value.toUpperCase().replace(/[^A-Z0-9]/g,"");
+      if(code.length<4)throw new Error("Mã nhà tối thiểu 4 ký tự (chữ/số).");
+      const {data:ex}=await sb.rpc("code_exists",{p_code:code});
+      if(mode==="st"&&!ex)throw new Error("Mã nhà không đúng.");
+      if(mode==="pa"&&ex)throw new Error("Mã nhà đã được dùng, hãy chọn mã khác.");
+      const {data:s,error}=await sb.auth.signUp({email:u+MAILDOM,password:p});
+      if(error)throw new Error(/registered|exists/i.test(error.message)?"Tên đăng nhập đã tồn tại.":error.message);
+      if(!s.session)throw new Error("Cần tắt 'Confirm email' trong Supabase (xem README).");
+      const {error:e2}=await sb.rpc("register_profile",{p_username:u,p_name:$("#an").value.trim(),p_role:mode==="st"?"student":"parent",p_code:code});
+      if(e2){await sb.auth.signOut();throw new Error(e2.message)}
+    }
+    if(!await enter())throw new Error("Không tải được hồ sơ.");
+  }catch(x){e.textContent=x.message;b.disabled=false}
+}
+async function enter(){
+  const {data:{user}}=await sb.auth.getUser();if(!user)return false;
+  const {data:me}=await sb.from("profiles").select("*").eq("id",user.id).maybeSingle();
+  if(!me){await sb.auth.signOut();return false}
+  S.me=me;
+  const {data:h}=await sb.from("houses").select("*").eq("id",me.house_id).single();S.house=h;
+  await Promise.all(["users","tasks","msgs"].map(load));
+  if(S.ch)sb.removeChannel(S.ch);
+  const f="house_id=eq."+me.house_id;
+  S.ch=sb.channel("house").on("postgres_changes",{event:"*",schema:"public",table:"tasks",filter:f},()=>load("tasks").then(()=>paint("tasks")))
+   .on("postgres_changes",{event:"*",schema:"public",table:"messages",filter:f},()=>load("msgs").then(()=>paint("msgs")))
+   .on("postgres_changes",{event:"*",schema:"public",table:"profiles",filter:f},()=>load("users").then(()=>paint("users"))).subscribe();
+  S.tab="mine";S.filter=isP()?"all":me.id;$("#tabs").style.display="flex";render();return true;
+}
+async function load(k){
+  const hid=S.me.house_id;
+  if(k==="users"){const {data}=await sb.from("profiles").select("*").eq("house_id",hid);S.users=data||[];const m=S.users.find(x=>x.id===S.me.id);if(m)S.me=m}
+  if(k==="tasks"){const {data}=await sb.from("tasks").select("*").eq("house_id",hid);S.tasks=data||[]}
+  if(k==="msgs"){const {data}=await sb.from("messages").select("*").eq("house_id",hid).order("created_at",{ascending:false}).limit(150);S.msgs=(data||[]).reverse()}
+}
+function paint(k){
+  if(!S.me)return;
+  if(S.tab==="chat")return k==="msgs"||k==="users"?chatView():0;
+  if(S.tab==="mine"||(S.tab==="assign"&&k==="tasks"&&!document.activeElement.matches("input,select")))render();
+}
+function tabsRender(){$("#tabs").innerHTML=TABS.map(t=>`<button class="${S.tab===t[0]?"on":""}" onclick="go('${t[0]}')"><span>${t[1]}</span>${t[2]}</button>`).join("")}
+function go(t){if(t==="game"){window.open(CFG.GAME_URL||"#","_blank");return}S.tab=t;render()}
+function render(){tabsRender();$("#chatbar").style.display=S.tab==="chat"?"flex":"none";({mine:mineView,assign:assignView,chat:chatView,me:meView})[S.tab]()}
+/* ---------- Việc của tôi ---------- */
+const myTasks=u=>S.tasks.filter(t=>t.assignee===u);
+function taskRow(t,showDate,who){
+  const own=t.assignee===S.me.id;
+  return `<div class="task ${t.done?"done":""}"><input type="checkbox" ${t.done?"checked":""} ${own?"":"disabled"} onchange="toggle('${t.id}',this.checked)"><div><div class="ti">${who?esc(nm(t.assignee))+" · ":""}${esc(t.title)}</div>
+  <div class="mu">${t.subject?`<span class="tag">${esc(t.subject)}</span>`:""}${t.lesson?esc(t.lesson)+" · ":""}${showDate?fd(t.task_date)+" · ":""}${hm(t.time_from)}${t.time_to?"–"+hm(t.time_to):""} · giao bởi ${esc(nm(t.created_by))}</div></div></div>`;
+}
+async function toggle(id,v){
+  const t=S.tasks.find(x=>x.id===id);t.done=v;
+  const {error}=await sb.from("tasks").update({done:v}).eq("id",id);if(error){t.done=!v}
+  mineView();
+}
+function weekStart(s){const d=pd(s);d.setDate(d.getDate()-((d.getDay()+6)%7));return ymd(d)}
+function mineView(){
+  const me=S.me.id,mt=myTasks(me),t0=today(),ws=weekStart(S.date);
+  let strip="";
+  for(let i=0;i<7;i++){const d=addD(ws,i),a=mt.filter(t=>t.task_date===d),n=a.filter(t=>t.done).length;
+    strip+=`<div class="day ${a.length&&n===a.length?"ok":""} ${d===S.date?"sel":""}" onclick="S.date='${d}';mineView()">${DN[pd(d).getDay()]}<b>${pd(d).getDate()}</b>${n}/${a.length}${d===t0?" •":""}</div>`}
+  const day=mt.filter(t=>t.task_date===S.date).sort((a,b)=>(a.time_from||"").localeCompare(b.time_from||""));
+  const back=mt.filter(t=>t.task_date<t0&&!t.done).sort((a,b)=>a.task_date.localeCompare(b.task_date));
+  const f=S.filter;let house="";
+  if(S.showRes){
+    house=students().map(s=>{const a=myTasks(s.id),n=a.filter(t=>t.done).length,late=a.filter(t=>t.task_date<t0&&!t.done).length;
+      const by={};a.forEach(t=>{const k=t.subject||"Khác";by[k]=by[k]||[0,0];by[k][1]++;if(t.done)by[k][0]++});
+      return `<div class="task"><div style="font-size:26px">${esc(s.avatar||"😀")}</div><div style="flex:1"><b>${esc(s.name)}</b> — ${n}/${a.length} xong (${a.length?Math.round(n/a.length*100):0}%)${late?` <span class="warn">· ${late} quá hạn</span>`:""}
+      <div class="mu">${Object.entries(by).map(([k,v])=>k+": "+v[0]+"/"+v[1]).join(" · ")||"Chưa có việc"}</div></div></div>`}).join("")||'<div class="mu">Chưa có học sinh.</div>';
+  }else{
+    house=S.tasks.filter(t=>t.task_date===S.date&&(f==="all"||t.assignee===f)).sort((a,b)=>(a.time_from||"").localeCompare(b.time_from||"")).map(t=>taskRow(t,false,true)).join("")||'<div class="mu">Không có việc.</div>';
+  }
+  main.innerHTML=`<div class="nav"><button class="g" onclick="S.date=addD(S.date,-1);mineView()">‹</button><div class="t">${fd(S.date)}</div><button class="g" onclick="S.date=addD(S.date,1);mineView()">›</button><button onclick="S.date=today();mineView()">Hôm nay</button></div>
+  <div class="week">${strip}</div>
+  ${back.length?`<div class="card"><h3 class="warn">⚠️ Còn tồn (${back.length})</h3>${back.map(t=>taskRow(t,true)).join("")}</div>`:""}
+  <div class="card"><h3>Việc của bạn</h3>${day.map(t=>taskRow(t)).join("")||'<div class="mu">Hôm nay không có việc 🎉</div>'}</div>
+  <div class="card"><h3>🏠 Việc của nhà</h3><div class="chips"><button class="chip ${f==="all"&&!S.showRes?"on":""}" onclick="S.filter='all';S.showRes=false;mineView()">Tất cả</button>
+  ${S.users.map(u=>`<button class="chip ${f===u.id&&!S.showRes?"on":""}" onclick="S.filter='${u.id}';S.showRes=false;mineView()">${esc(u.avatar||"😀")} ${esc(u.name)}${u.role==="parent"?" (PH)":""}</button>`).join("")}
+  <button class="chip ${S.showRes?"on":""}" onclick="S.showRes=true;mineView()">📊 Kết quả Tự học</button></div>${house}</div>`;
+}
+/* ---------- Giao việc ---------- */
+function assignView(){
+  const me=S.me.id,mine=S.tasks.filter(t=>t.created_by===me).sort((a,b)=>b.task_date.localeCompare(a.task_date)||(b.time_from||"").localeCompare(a.time_from||"")).slice(0,80);
+  const cand=isP()?students():S.users.filter(u=>u.id===me);
+  main.innerHTML=`<div class="card"><h3>➕ Giao việc mới</h3>
+  <input id="gt" placeholder="Tên việc">
+  <div class="row"><select id="gs">${SUBJ.map(s=>`<option>${s}</option>`).join("")}</select><input id="gl" placeholder="Bài (VD: Bài 5)"></div>
+  <input id="gd" type="date" value="${S.date}">
+  <div class="row"><input id="gf" type="time" value="19:00"><input id="gto" type="time" value="20:00"></div>
+  <div class="mu" style="margin-bottom:4px">Giao cho</div>
+  <div class="chk">${cand.map(u=>`<label><input type="checkbox" class="gu" value="${u.id}" ${u.id===me?"checked":""}>${esc(u.avatar||"😀")} ${esc(u.name)}</label>`).join("")||'<span class="mu">Chưa có học sinh nào trong nhà. Hãy chia sẻ mã nhà.</span>'}</div>
+  <select id="gr"><option value="0">Không lặp</option><option value="d">Hằng ngày (7 ngày)</option><option value="w">Hằng tuần (4 tuần)</option></select>
+  <div class="err" id="ge"></div><button style="width:100%" onclick="addTask()">Giao việc</button></div>
+  <div class="card"><h3>Việc tôi đã giao</h3>${mine.map(t=>`<div class="task"><div style="flex:1"><div>${esc(t.title)}</div><div class="mu"><span class="tag">${esc(t.subject||"")}</span>${t.lesson?esc(t.lesson)+" · ":""}${fd(t.task_date)} · ${hm(t.time_from)}–${hm(t.time_to)}</div>
+  <div class="mu">${esc(nm(t.assignee))} ${t.done?'<span class="okt">✓ Xong</span>':"⏳"}</div></div><button class="g" style="color:var(--bad)" onclick="delTask('${t.id}')">🗑</button></div>`).join("")||'<div class="mu">Chưa giao việc nào.</div>'}</div>`;
+}
+async function addTask(){
+  const e=$("#ge"),title=$("#gt").value.trim(),as=[...document.querySelectorAll(".gu:checked")].map(x=>x.value),d=$("#gd").value,r=$("#gr").value;
+  if(!title)return e.textContent="Nhập tên việc.";if(!as.length)return e.textContent="Chọn người nhận.";if(!d)return e.textContent="Chọn ngày.";
+  const n=r==="d"?7:r==="w"?4:1,step=r==="w"?7:1,rows=[];
+  for(let i=0;i<n;i++)as.forEach(a=>rows.push({house_id:S.me.house_id,title,subject:$("#gs").value,lesson:$("#gl").value.trim()||null,task_date:addD(d,i*step),time_from:$("#gf").value||null,time_to:$("#gto").value||null,assignee:a,created_by:S.me.id}));
+  e.textContent="";
+  const {error}=await sb.from("tasks").insert(rows);
+  if(error)return e.textContent="Lỗi: "+error.message;
+  S.date=d;await load("tasks");assignView();
+}
+async function delTask(id){if(confirm("Xóa việc này?")){await sb.from("tasks").delete().eq("id",id);await load("tasks");assignView()}}
+/* ---------- Chat ---------- */
+function chatView(){
+  main.innerHTML=`<div class="mu" style="text-align:center">💬 Nhóm chat của nhà · mã ${esc(S.house.code)}</div>`+
+  S.msgs.map(x=>`<div class="msg ${x.sender===S.me.id?"me":""}"><small>${esc(nm(x.sender))} · ${new Date(x.created_at).toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})}</small>${esc(x.body)}</div>`).join("")||'<div class="mu" style="text-align:center;margin-top:20px">Chưa có tin nhắn.</div>';
+  main.scrollTop=main.scrollHeight;
+}
+async function send(){
+  const i=$("#ci"),t=i.value.trim();if(!t)return;i.value="";
+  const {error}=await sb.from("messages").insert({house_id:S.me.house_id,sender:S.me.id,body:t.slice(0,500)});if(error)i.value=t;
+}
+$("#cs").onclick=send;$("#ci").onkeydown=e=>{if(e.key==="Enter")send()};
+/* ---------- Hồ sơ ---------- */
+function meView(){
+  const m=S.me;
+  main.innerHTML=`<div class="card"><div class="av">${esc(m.avatar||"😀")}</div><div class="av2">${AVS.map(a=>`<button onclick="setAv('${a}')">${a}</button>`).join("")}</div>
+  <div class="mu" style="text-align:center;margin-top:6px">${isP()?"Phụ huynh":"Học sinh"} · @${esc(m.username)}</div></div>
+  <div class="card"><h3>Thông tin</h3><input id="pn" placeholder="Tên hiển thị" value="${esc(m.name)}"><input id="pb" type="date" value="${esc(m.birth||"")}"><input id="pz" placeholder="Liên kết Zalo (số điện thoại hoặc link)" value="${esc(m.zalo||"")}">
+  <button style="width:100%" onclick="saveInfo()">Lưu</button><div class="okt" id="pm"></div></div>
+  ${isP()?`<div class="card"><h3>🏠 Mã nhà</h3><div class="mu">Học sinh dùng mã này để đăng ký vào nhà bạn.</div><input id="hc" value="${esc(S.house.code)}" autocapitalize="characters"><button style="width:100%" onclick="saveCode()">Đổi mã nhà</button><div class="err" id="hm"></div></div>`:`<div class="card mu">🏠 Mã nhà: <b>${esc(S.house.code)}</b></div>`}
+  <div class="card"><h3>Đổi mật khẩu</h3><input id="n1" type="password" placeholder="Mật khẩu mới" autocomplete="new-password"><input id="n2" type="password" placeholder="Nhập lại mật khẩu mới" autocomplete="new-password"><button style="width:100%" onclick="chPw()">Đổi mật khẩu</button><div class="err" id="pe"></div></div>
+  <button class="d" style="width:100%" onclick="logout()">Đăng xuất</button>`;
+}
+const upd=o=>sb.from("profiles").update(o).eq("id",S.me.id);
+async function setAv(a){await upd({avatar:a});S.me.avatar=a;meView()}
+async function saveInfo(){const {error}=await upd({name:$("#pn").value.trim()||S.me.username,birth:$("#pb").value||null,zalo:$("#pz").value.trim()});$("#pm").textContent=error?"Lỗi: "+error.message:"Đã lưu ✓"}
+async function saveCode(){
+  const c=$("#hc").value.toUpperCase().replace(/[^A-Z0-9]/g,""),e=$("#hm");e.className="err";e.textContent="";
+  if(c.length<4)return e.textContent="Mã tối thiểu 4 ký tự.";
+  const {error}=await sb.from("houses").update({code:c}).eq("id",S.house.id);
+  if(error)return e.textContent=/duplicate|unique/i.test(error.message)?"Mã đã được dùng.":error.message;
+  S.house.code=c;e.className="okt";e.textContent="Đã đổi mã ✓"}
+async function chPw(){
+  const a=$("#n1").value,b=$("#n2").value,e=$("#pe");e.className="err";
+  if(a.length<6)return e.textContent="Mật khẩu tối thiểu 6 ký tự.";if(a!==b)return e.textContent="Mật khẩu nhập lại không khớp.";
+  const {error}=await sb.auth.updateUser({password:a});
+  if(error)return e.textContent=error.message;
+  e.className="okt";e.textContent="Đã đổi mật khẩu ✓";$("#n1").value=$("#n2").value=""}
+async function logout(){await sb.auth.signOut();S.me=null;authView()}
+boot();
+</script></body></html>
