@@ -52,7 +52,7 @@ button.d{background:var(--bad)}
 <script src="config.js"></script>
 <script>
 const CFG=window.APP_CONFIG||{};
-const SUBJ=["Toán","Ngữ văn","Tiếng Anh","KHTN","Lịch sử & Địa lý","GDCD","Tin học","Công nghệ","Khác"];
+const SUBJ=["Toán","Lý","Hoá","Anh","Tin","Việc nhà"]; // môn có repo riêng khai báo trong config.js > SUBJECTS (key trùng tên môn)
 const AVS=["😀","😎","🤓","🦊","🐼","🐯","🦄","🐸","🚀","⚽","🎨","📚"];
 const TABS=[["mine","📋","Việc của tôi"],["assign","➕","Giao việc"],["chat","💬","Chat"],["game","🎮","Giải trí"],["me","👤","Hồ sơ"]];
 const MAILDOM="@avh-hocsinh.app";
@@ -160,7 +160,7 @@ const myTasks=u=>S.tasks.filter(t=>t.assignee===u);
 function taskRow(t,showDate,who){
   const own=t.assignee===S.me.id;
   return `<div class="task ${t.done?"done":""}"><input type="checkbox" ${t.done?"checked":""} ${own?"":"disabled"} onchange="toggle('${t.id}',this.checked)"><div><div class="ti">${who?esc(nm(t.assignee))+" · ":""}${esc(t.title)}</div>
-  <div class="mu">${t.subject?`<span class="tag">${esc(t.subject)}</span>`:""}${t.lesson?esc(t.lesson)+" · ":""}${showDate?fd(t.task_date)+" · ":""}${hm(t.time_from)}${t.time_to?"–"+hm(t.time_to):""} · giao bởi ${esc(nm(t.created_by))}</div></div></div>`;
+  <div class="mu">${t.subject?`<span class="tag">${esc(t.subject)}</span>`:""}${t.lesson?esc(t.lesson)+" · ":""}${showDate?fd(t.task_date)+" · ":""}${hm(t.time_from)}${t.time_to?"–"+hm(t.time_to):""} · giao bởi ${esc(nm(t.created_by))}</div>${t.link&&own?`<button class="chip" style="margin-top:6px" onclick="openTask('${t.id}')">📖 Mở bài học</button>`:""}</div></div>`;
 }
 async function toggle(id,v){
   const t=S.tasks.find(x=>x.id===id);t.done=v;
@@ -199,7 +199,7 @@ function assignView(){
   const cand=isP()?students():S.users.filter(u=>u.id===me);
   main.innerHTML=`<div class="card"><h3>➕ Giao việc mới</h3>
   <input id="gt" placeholder="Tên việc">
-  <div class="row"><select id="gs">${SUBJ.map(s=>`<option>${s}</option>`).join("")}</select><input id="gl" placeholder="Bài (VD: Bài 5)"></div>
+  <select id="gs" onchange="subjChange()">${SUBJ.map(s=>`<option>${s}</option>`).join("")}</select><div id="glw"><input id="gl" placeholder="Bài (VD: Bài 5)"></div>
   <input id="gd" type="date" value="${S.date}">
   <div class="row"><input id="gf" type="time" value="19:00"><input id="gto" type="time" value="20:00"></div>
   <div class="mu" style="margin-bottom:4px">Giao cho</div>
@@ -208,15 +208,39 @@ function assignView(){
   <div class="err" id="ge"></div><button style="width:100%" onclick="addTask()">Giao việc</button></div>
   <div class="card"><h3>Việc tôi đã giao</h3>${mine.map(t=>`<div class="task"><div style="flex:1"><div>${esc(t.title)}</div><div class="mu"><span class="tag">${esc(t.subject||"")}</span>${t.lesson?esc(t.lesson)+" · ":""}${fd(t.task_date)} · ${hm(t.time_from)}–${hm(t.time_to)}</div>
   <div class="mu">${esc(nm(t.assignee))} ${t.done?'<span class="okt">✓ Xong</span>':"⏳"}</div></div><button class="g" style="color:var(--bad)" onclick="delTask('${t.id}')">🗑</button></div>`).join("")||'<div class="mu">Chưa giao việc nào.</div>'}</div>`;
+  subjChange();
 }
+const siteOf=k=>(CFG.SUBJECTS||[]).find(x=>x.key===k);
+S.lc={};
+async function getLessons(k){ // danh sách bài lấy từ lessons.json trong repo của môn
+  const x=siteOf(k);if(!x||!x.lessons)return null;if(S.lc[k])return S.lc[k];
+  try{const r=await fetch(x.lessons,{cache:"no-cache"}),j=await r.json();return S.lc[k]=j.lessons||null}catch(e){return null}
+}
+async function subjChange(){
+  const k=$("#gs").value,w=$("#glw");
+  if(k==="Việc nhà"){w.innerHTML="";return}
+  w.innerHTML='<input id="gl" placeholder="Bài (VD: Bài 5)">';
+  const L=await getLessons(k);if(!L||$("#gs").value!==k)return;
+  let h="",g=null;
+  L.forEach((l,i)=>{if(l.g!==g){if(g!==null)h+="</optgroup>";h+=`<optgroup label="${esc(l.g)}">`;g=l.g}h+=`<option value="${i}">${esc(l.t)}</option>`});
+  h+='</optgroup><option value="-1">✏️ Bài khác (tự nhập)</option>';
+  w.innerHTML=`<select id="gls" onchange="$('#gl').style.display=this.value==='-1'?'':'none'">${h}</select><input id="gl" placeholder="Nhập tên bài" style="display:none">`;
+}
+function openTask(id){const t=S.tasks.find(x=>x.id===id);if(t&&t.link)openSite(t.link)}
 async function addTask(){
-  const e=$("#ge"),title=$("#gt").value.trim(),as=[...document.querySelectorAll(".gu:checked")].map(x=>x.value),d=$("#gd").value,r=$("#gr").value;
+  const e=$("#ge"),k=$("#gs").value,as=[...document.querySelectorAll(".gu:checked")].map(x=>x.value),d=$("#gd").value,r=$("#gr").value;
+  let title=$("#gt").value.trim(),lesson=null,base=null;
+  const gls=$("#gls");
+  if(gls&&gls.value!=="-1"){const l=S.lc[k][+gls.value];lesson=l.t;base=siteOf(k).url.replace(/\/$/,"")+"/?"+l.q}
+  else{const gl=$("#gl");lesson=gl?gl.value.trim()||null:null}
+  if(!title&&lesson)title="Học: "+lesson;
   if(!title)return e.textContent="Nhập tên việc.";if(!as.length)return e.textContent="Chọn người nhận.";if(!d)return e.textContent="Chọn ngày.";
   const n=r==="d"?7:r==="w"?4:1,step=r==="w"?7:1,rows=[];
-  for(let i=0;i<n;i++)as.forEach(a=>rows.push({house_id:S.me.house_id,title,subject:$("#gs").value,lesson:$("#gl").value.trim()||null,task_date:addD(d,i*step),time_from:$("#gf").value||null,time_to:$("#gto").value||null,assignee:a,created_by:S.me.id}));
+  for(let i=0;i<n;i++)as.forEach(a=>{const id=crypto.randomUUID();
+    rows.push({id,house_id:S.me.house_id,title,subject:k,lesson,link:base?base+"&task="+id:null,task_date:addD(d,i*step),time_from:$("#gf").value||null,time_to:$("#gto").value||null,assignee:a,created_by:S.me.id})});
   e.textContent="";
   const {error}=await sb.from("tasks").insert(rows);
-  if(error)return e.textContent="Lỗi: "+error.message;
+  if(error)return e.textContent="Lỗi: "+error.message+(/link/.test(error.message)?" (cần chạy migration_link.sql trong Supabase)":"");
   S.date=d;await load("tasks");assignView();
 }
 async function delTask(id){if(confirm("Xóa việc này?")){await sb.from("tasks").delete().eq("id",id);await load("tasks");assignView()}}

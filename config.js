@@ -4,8 +4,10 @@ window.APP_CONFIG = {
   SUPABASE_ANON_KEY: "sb_publishable_-UPds1t0kDY5VKlWOZHncQ_kJg-X0CJ",
   GAME_URL: "https://aivuihonhocsinhthcs-trochoi.vercel.app",   // đổi sang địa chỉ game tro-choi khi có
   ZALO_BOT_NAME: "Bot Ai vui hơn",            // tên bot Zalo hiển thị trong hướng dẫn liên kết
-  SUBJECTS: [ // các web môn học riêng (thêm môn mới ở đây)
-    { name: "Hoá học vui", icon: "🧪", url: "https://hoa-hoc-nine.vercel.app" }
+  SUBJECTS: [ // web môn học riêng. key = tên môn trong màn hình Giao việc (Toán, Lý, Hoá, Anh, Tin)
+    // lessons = địa chỉ file lessons.json (danh sách bài) nằm trong repo của môn đó
+    { key: "Hoá", name: "Hoá học vui", icon: "🧪", url: "https://hoa-hoc-nine.vercel.app", lessons: "https://hoa-hoc-nine.vercel.app/lessons.json" }
+    // { key: "Toán", name: "Toán vui", icon: "📐", url: "https://...", lessons: "https://.../lessons.json" },
   ],
   ZALO_BOT_URL: ""                            // link mở bot Zalo (để trống nếu chưa có)
 };
