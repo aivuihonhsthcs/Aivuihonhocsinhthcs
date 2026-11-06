@@ -1,0 +1,135 @@
+{
+ "subject": "Anh",
+ "lessons": [
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 1. Present simple & present continuous",
+   "q": "bai=1"
+  },
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 2. Past simple & past continuous",
+   "q": "bai=2"
+  },
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 3. Present perfect",
+   "q": "bai=3"
+  },
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 4. Tương lai: will & be going to",
+   "q": "bai=4"
+  },
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 5. So sánh hơn và so sánh nhất",
+   "q": "bai=5"
+  },
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 6. Modal verbs",
+   "q": "bai=6"
+  },
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 7. Câu điều kiện & wish",
+   "q": "bai=7"
+  },
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 8. Câu bị động",
+   "q": "bai=8"
+  },
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 9. Câu tường thuật",
+   "q": "bai=9"
+  },
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 10. Mệnh đề quan hệ",
+   "q": "bai=10"
+  },
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 11. Mạo từ & lượng từ",
+   "q": "bai=11"
+  },
+  {
+   "g": "Ngữ pháp",
+   "t": "Bài 12. Giới từ & mẫu động từ",
+   "q": "bai=12"
+  },
+  {
+   "g": "Từ vựng",
+   "t": "Từ vựng: Gia đình & bạn bè",
+   "q": "tu=0"
+  },
+  {
+   "g": "Từ vựng",
+   "t": "Từ vựng: Trường học",
+   "q": "tu=1"
+  },
+  {
+   "g": "Từ vựng",
+   "t": "Từ vựng: Sở thích",
+   "q": "tu=2"
+  },
+  {
+   "g": "Từ vựng",
+   "t": "Từ vựng: Sức khoẻ & ăn uống",
+   "q": "tu=3"
+  },
+  {
+   "g": "Từ vựng",
+   "t": "Từ vựng: Du lịch",
+   "q": "tu=4"
+  },
+  {
+   "g": "Từ vựng",
+   "t": "Từ vựng: Môi trường",
+   "q": "tu=5"
+  },
+  {
+   "g": "Từ vựng",
+   "t": "Từ vựng: Công nghệ",
+   "q": "tu=6"
+  },
+  {
+   "g": "Từ vựng",
+   "t": "Từ vựng: Lễ hội & văn hoá",
+   "q": "tu=7"
+  },
+  {
+   "g": "Kỹ năng",
+   "t": "Kỹ năng A. Sắp xếp câu",
+   "q": "kn=A"
+  },
+  {
+   "g": "Kỹ năng",
+   "t": "Kỹ năng B. Động từ bất quy tắc",
+   "q": "kn=B"
+  },
+  {
+   "g": "Kỹ năng",
+   "t": "Kỹ năng C. Nghe và chọn từ",
+   "q": "kn=C"
+  },
+  {
+   "g": "Luyện câu hỏi (cần đạt 70%)",
+   "t": "Luyện 10 câu: Tất cả",
+   "q": "quiz=a&n=10&pass=70"
+  },
+  {
+   "g": "Luyện câu hỏi (cần đạt 70%)",
+   "t": "Luyện 10 câu: Ngữ pháp",
+   "q": "quiz=g&n=10&pass=70"
+  },
+  {
+   "g": "Luyện câu hỏi (cần đạt 70%)",
+   "t": "Luyện 10 câu: Từ vựng",
+   "q": "quiz=w&n=10&pass=70"
+  }
+ ]
+}
