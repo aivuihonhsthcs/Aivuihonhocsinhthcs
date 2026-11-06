@@ -6,7 +6,8 @@ window.APP_CONFIG = {
   ZALO_BOT_NAME: "Bot Ai vui hơn",            // tên bot Zalo hiển thị trong hướng dẫn liên kết
   SUBJECTS: [ // web môn học riêng. key = tên môn trong màn hình Giao việc (Toán, Lý, Hoá, Anh, Tin)
     // lessons = địa chỉ file lessons.json (danh sách bài) nằm trong repo của môn đó
-    { key: "Hoá", name: "Hoá học vui", icon: "🧪", url: "https://hoa-hoc-nine.vercel.app", lessons: "https://hoa-hoc-nine.vercel.app/lessons.json" }
+    { key: "Hoá", name: "Hoá học vui", icon: "🧪", url: "https://hoa-hoc-nine.vercel.app", lessons: "https://hoa-hoc-nine.vercel.app/lessons.json" },
+    { key: "Anh", name: "Tiếng Anh vui", icon: "🗣️", url: "https://aivuihonhsthcs.github.io/tieng-anh", lessons: "https://aivuihonhsthcs.github.io/tieng-anh/lessons.json" }
     // { key: "Toán", name: "Toán vui", icon: "📐", url: "https://...", lessons: "https://.../lessons.json" },
   ],
   ZALO_BOT_URL: ""                            // link mở bot Zalo (để trống nếu chưa có)
