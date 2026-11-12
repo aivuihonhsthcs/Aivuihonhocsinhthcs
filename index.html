@@ -206,12 +206,13 @@ function assignView(){
   <div class="chk">${cand.map(u=>`<label><input type="checkbox" class="gu" value="${u.id}" ${u.id===me?"checked":""}>${av(u)} ${esc(u.name)}</label>`).join("")||'<span class="mu">Chưa có học sinh nào trong nhà. Hãy chia sẻ mã nhà.</span>'}</div>
   <select id="gr"><option value="0">Không lặp</option><option value="d">Hằng ngày (7 ngày)</option><option value="w">Hằng tuần (4 tuần)</option></select>
   <div class="err" id="ge"></div><button style="width:100%" onclick="addTask()">Giao việc</button></div>
-  <div class="card"><h3>Việc tôi đã giao</h3>${mine.map(t=>`<div class="task"><div style="flex:1"><div>${esc(t.title)}</div><div class="mu"><span class="tag">${esc(t.subject||"")}</span>${t.lesson?esc(t.lesson)+" · ":""}${fd(t.task_date)} · ${hm(t.time_from)}–${hm(t.time_to)}</div>
+  ${isP()?examCard():""}<div class="card"><h3>Việc tôi đã giao</h3>${mine.map(t=>`<div class="task"><div style="flex:1"><div>${esc(t.title)}</div><div class="mu"><span class="tag">${esc(t.subject||"")}</span>${t.lesson?esc(t.lesson)+" · ":""}${fd(t.task_date)} · ${hm(t.time_from)}–${hm(t.time_to)}</div>
   <div class="mu">${esc(nm(t.assignee))} ${t.done?'<span class="okt">✓ Xong</span>':"⏳"}</div></div><button class="g" style="color:var(--bad)" onclick="delTask('${t.id}')">🗑</button></div>`).join("")||'<div class="mu">Chưa giao việc nào.</div>'}</div>`;
   subjChange();
+  if(isP())loadExams().then(()=>{renderExams();subjChange()});else loadExams().then(subjChange);
 }
 const siteOf=k=>(CFG.SUBJECTS||[]).find(x=>x.key===k);
-S.lc={};
+S.lc={};S.lcx={};S.exams=[];
 async function getLessons(k){ // danh sách bài lấy từ lessons.json trong repo của môn
   const x=siteOf(k);if(!x||!x.lessons)return null;if(S.lc[k])return S.lc[k];
   try{const r=await fetch(x.lessons,{cache:"no-cache"}),j=await r.json();return S.lc[k]=j.lessons||null}catch(e){return null}
@@ -220,7 +221,11 @@ async function subjChange(){
   const k=$("#gs").value,w=$("#glw");
   if(k==="Việc nhà"){w.innerHTML="";return}
   w.innerHTML='<input id="gl" placeholder="Bài (VD: Bài 5)">';
-  const L=await getLessons(k);if(!L||$("#gs").value!==k)return;
+  if(!siteOf(k))return;
+  const L0=(await getLessons(k))||[];
+  const ex=(S.exams||[]).filter(e=>e.subject===k).map(e=>({g:"Đề thi từ Google Sheet",t:`Đề: ${e.title} (${exCount(e)} câu)`,q:`exam=${e.id}&pass=70`}));
+  const L=[...L0,...ex];if(!L.length||$("#gs").value!==k)return;
+  S.lcx[k]=L;
   let h="",g=null;
   L.forEach((l,i)=>{if(l.g!==g){if(g!==null)h+="</optgroup>";h+=`<optgroup label="${esc(l.g)}">`;g=l.g}h+=`<option value="${i}">${esc(l.t)}</option>`});
   h+='</optgroup><option value="-1">✏️ Bài khác (tự nhập)</option>';
@@ -231,9 +236,9 @@ async function addTask(){
   const e=$("#ge"),k=$("#gs").value,as=[...document.querySelectorAll(".gu:checked")].map(x=>x.value),d=$("#gd").value,r=$("#gr").value;
   let title=$("#gt").value.trim(),lesson=null,base=null;
   const gls=$("#gls");
-  if(gls&&gls.value!=="-1"){const l=S.lc[k][+gls.value];lesson=l.t;base=siteOf(k).url.replace(/\/$/,"")+"/?"+l.q}
+  if(gls&&gls.value!=="-1"){const l=S.lcx[k][+gls.value];lesson=l.t;base=siteOf(k).url.replace(/\/$/,"")+"/?"+l.q}
   else{const gl=$("#gl");lesson=gl?gl.value.trim()||null:null}
-  if(!title&&lesson)title="Học: "+lesson;
+  if(!title&&lesson)title=lesson.startsWith("Đề:")?"Làm "+lesson:"Học: "+lesson;
   if(!title)return e.textContent="Nhập tên việc.";if(!as.length)return e.textContent="Chọn người nhận.";if(!d)return e.textContent="Chọn ngày.";
   const n=r==="d"?7:r==="w"?4:1,step=r==="w"?7:1,rows=[];
   for(let i=0;i<n;i++)as.forEach(a=>{const id=crypto.randomUUID();
@@ -242,6 +247,105 @@ async function addTask(){
   const {error}=await sb.from("tasks").insert(rows);
   if(error)return e.textContent="Lỗi: "+error.message+(/link/.test(error.message)?" (cần chạy migration_link.sql trong Supabase)":"");
   S.date=d;await load("tasks");assignView();
+}
+/* ---------- Đề trắc nghiệm từ Google Sheet ---------- */
+const nz=x=>String(x).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").trim();
+const exCount=e=>(e.exam_questions&&e.exam_questions[0]&&e.exam_questions[0].count)||0;
+async function loadExams(){
+  const {data}=await sb.from("exams").select("id,subject,title,created_at,exam_questions(count)").eq("house_id",S.me.house_id).order("created_at",{ascending:false});
+  S.exams=data||[];
+}
+function examCard(){
+  return `<div class="card"><h3>📄 Tạo đề trắc nghiệm từ Google Sheet</h3>
+  <div class="mu" style="margin-bottom:8px">Bảng gồm các cột: Câu hỏi, Đáp án A, B, C, D, Đáp án đúng (A–D hoặc 1–4). Có thể thêm cột Giải thích và Bài.</div>
+  <div class="row"><select id="exs">${SUBJ.filter(x=>x!=="Việc nhà").map(x=>`<option>${x}</option>`).join("")}</select><input id="ext" placeholder="Tên đề (VD: Kiểm tra 15 phút)"></div>
+  <input id="exl" placeholder="Dán link Google Sheet (đã chia sẻ 'Bất kỳ ai có đường liên kết')">
+  <div class="mu">Hoặc chọn file CSV tải từ Sheet:</div><input id="exf" type="file" accept=".csv,.tsv,.txt" style="margin-top:4px">
+  <div class="mu">Hoặc dán các ô sao chép từ Sheet:</div><textarea id="exp" rows="3" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);margin-bottom:8px"></textarea>
+  <button style="width:100%" onclick="exRead()">📥 Đọc đề</button><div id="exr" class="mu" style="margin-top:8px"></div>
+  <h3 style="margin-top:12px">Đề đã tạo</h3><div id="exlist" class="mu">Đang tải…</div></div>`;
+}
+function renderExams(){
+  const el=$("#exlist");if(!el)return;
+  el.innerHTML=S.exams.map(e=>`<div class="task"><div style="flex:1"><b>${esc(e.title)}</b><div class="mu"><span class="tag">${esc(e.subject)}</span>${exCount(e)} câu · ${new Date(e.created_at).toLocaleDateString("vi-VN")}</div></div><button class="g" style="color:var(--bad)" onclick="exDel(${e.id})">🗑</button></div>`).join("")||"Chưa có đề nào.";
+}
+async function exDel(id){if(!confirm("Xóa đề này (các việc đã giao vẫn còn nhưng không mở được đề)?"))return;await sb.from("exams").delete().eq("id",id);await loadExams();renderExams();subjChange()}
+function sheetUrl(u){
+  u=u.trim();let m=u.match(/spreadsheets\/d\/e\/([^\/?#]+)/);const g=(u.match(/[#&?]gid=(\d+)/)||[])[1];
+  if(m)return `https://docs.google.com/spreadsheets/d/e/${m[1]}/pub?output=csv${g?"&gid="+g:""}`;
+  m=u.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if(m)return `https://docs.google.com/spreadsheets/d/${m[1]}/gviz/tq?tqx=out:csv${g?"&gid="+g:""}`;
+  return u;
+}
+function parseTable(t){
+  t=t.replace(/^\ufeff/,"");const d=(t.split("\n")[0]||"").includes("\t")?"\t":",",rows=[];let r=[],f="",q=false;
+  for(let i=0;i<t.length;i++){const c=t[i];
+    if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;
+    else if(c===d){r.push(f);f=""}
+    else if(c==="\n"||c==="\r"){if(c==="\r"&&t[i+1]==="\n")i++;r.push(f);f="";rows.push(r);r=[]}
+    else f+=c}
+  if(f!==""||r.length){r.push(f);rows.push(r)}
+  return rows.filter(r=>r.some(x=>String(x).trim()));
+}
+function parseExam(rows){
+  let col={q:0,o:[1,2,3,4],a:5,e:6,l:7},start=0;
+  const h=rows[0].map(nz),f=re=>h.findIndex(x=>re.test(x));
+  if(h.some(x=>/cau hoi|question|noi dung|^q$/.test(x))){
+    start=1;col.q=f(/cau hoi|question|noi dung|^q$/);
+    const o=[0,1,2,3].map(i=>f(new RegExp("^(dap an|phuong an|lua chon|option|answer)?\\s*["+"abcd"[i]+(i+1)+"]$")));
+    if(o.every(x=>x>=0))col.o=o;
+    col.a=f(/dap an dung|^dung$|correct|^dap an$|^answer$|chinh xac/);col.e=f(/giai thich|explain|loi giai/);col.l=f(/^bai$|lesson|^bai so$/);
+  }
+  const ok=[],err=[];
+  for(let i=start;i<rows.length;i++){
+    const c=rows[i].map(x=>String(x).trim()),n=i+1,q=c[col.q]||"";
+    let o=col.o.map(j=>c[j]||"");while(o.length&&!o[o.length-1])o.pop();
+    if(!q){err.push(`Dòng ${n}: thiếu câu hỏi`);continue}
+    if(o.length<2||o.some(x=>!x)){err.push(`Dòng ${n}: cần ít nhất 2 đáp án liên tiếp, không bỏ trống ở giữa`);continue}
+    const raw=(col.a>=0?c[col.a]:"")||"";let a=-1;
+    if(/^[A-Da-d]$/.test(raw))a="abcd".indexOf(raw.toLowerCase());
+    else if(/^[1-4]$/.test(raw))a=+raw-1;
+    else a=o.findIndex(x=>nz(x)===nz(raw)&&raw);
+    if(a<0||a>=o.length){err.push(`Dòng ${n}: không hiểu "Đáp án đúng" (${raw||"trống"})`);continue}
+    ok.push({q,o,a,e:(col.e>=0&&c[col.e])||null,lesson:(col.l>=0&&parseInt(c[col.l]))||null});
+  }
+  return{ok,err};
+}
+async function exRead(){
+  const box=$("#exr"),title=$("#ext").value.trim(),subject=$("#exs").value;S.exp=null;
+  if(!title)return box.textContent="Nhập tên đề.";
+  box.textContent="Đang đọc…";
+  try{
+    let text="";const file=$("#exf").files[0],link=$("#exl").value.trim();
+    if(file)text=await file.text();
+    else if(link){let r;try{r=await fetch(sheetUrl(link))}catch(e){throw new Error("Không đọc được link (Sheet chưa chia sẻ công khai?). Hãy tải file CSV hoặc dán các ô vào ô bên dưới.")}
+      if(!r.ok)throw new Error("Không mở được link Sheet (mã "+r.status+"). Kiểm tra quyền chia sẻ.");text=await r.text();
+      if(/<html/i.test(text.slice(0,200)))throw new Error("Link trả về trang đăng nhập. Hãy chia sẻ Sheet 'Bất kỳ ai có đường liên kết' hoặc tải file CSV.")}
+    else text=$("#exp").value;
+    if(!text.trim())throw new Error("Chưa có dữ liệu. Dán link, chọn file hoặc dán các ô.");
+    const rows=parseTable(text);if(rows.length<2)throw new Error("Không thấy dòng câu hỏi nào.");
+    const {ok,err}=parseExam(rows);
+    if(!ok.length)throw new Error("Không đọc được câu nào. "+err.slice(0,3).join("; "));
+    S.exp={title,subject,rows:ok};
+    box.innerHTML=`<div class="okt">✓ Đọc được ${ok.length} câu${err.length?`, bỏ qua ${err.length} dòng lỗi`:""}.</div>
+    <div style="margin:6px 0"><b>Câu 1:</b> ${esc(ok[0].q)}<br>${ok[0].o.map((x,i)=>`${i===ok[0].a?"✅":"▫️"} ${"ABCD"[i]}. ${esc(x)}`).join("<br>")}</div>
+    ${err.length?`<div class="warn">${err.slice(0,5).map(esc).join("<br>")}${err.length>5?"<br>…":""}</div>`:""}
+    <button style="width:100%;margin-top:8px" onclick="exSave()">💾 Lưu đề "${esc(title)}" (môn ${esc(subject)})</button>`;
+  }catch(e){box.innerHTML=`<span class="warn">${esc(e.message)}</span>`}
+}
+async function exSave(){
+  const x=S.exp,box=$("#exr");if(!x)return;box.textContent="Đang lưu…";
+  const {data:ex,error}=await sb.from("exams").insert({house_id:S.me.house_id,subject:x.subject,title:x.title,created_by:S.me.id}).select("id").single();
+  if(error)return box.innerHTML=`<span class="warn">Lỗi: ${esc(error.message)}${/exams/.test(error.message)?" (cần chạy exams.sql trong Supabase)":""}</span>`;
+  const rows=x.rows.map((r,i)=>({exam_id:ex.id,house_id:S.me.house_id,subject:x.subject,lesson:r.lesson,position:i+1,q:r.q,options:r.o,answer:r.a,explain:r.e}));
+  for(let i=0;i<rows.length;i+=100){
+    const {error:e2}=await sb.from("exam_questions").insert(rows.slice(i,i+100));
+    if(e2){await sb.from("exams").delete().eq("id",ex.id);return box.innerHTML=`<span class="warn">Lỗi: ${esc(e2.message)}</span>`}
+  }
+  S.exp=null;$("#ext").value="";$("#exl").value="";$("#exp").value="";$("#exf").value="";
+  box.innerHTML=`<span class="okt">✓ Đã lưu đề (${rows.length} câu). Chọn môn ${esc(x.subject)} ở phần Giao việc để giao đề.</span>`;
+  await loadExams();renderExams();subjChange();
 }
 async function delTask(id){if(confirm("Xóa việc này?")){await sb.from("tasks").delete().eq("id",id);await load("tasks");assignView()}}
 /* ---------- Chat ---------- */
