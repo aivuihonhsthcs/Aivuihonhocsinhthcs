@@ -1,1 +1,306 @@
-m
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Toán vui – Lớp 8, 9</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#e8fbf3;--card:#fff;--ink:#1d1647;--mut:#5d5a7a;--acc:#6c4cf0;--sun:#ffc233;--pink:#ff5c8a;--line:#cfc8f5;--sh:#1d1647;--kl:#cfeaf8;--pk:#ffe2a8;--kh:#e5d4ff;--good:#16a05a;--bad:#e0244f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17122e;--card:#272050;--ink:#f4f0ff;--mut:#b2acd6;--acc:#9a84ff;--line:#4a4180;--sh:#000;--kl:#1f4a63;--pk:#6a5218;--kh:#47336f}}
+:root[data-theme="dark"]{--bg:#17122e;--card:#272050;--ink:#f4f0ff;--mut:#b2acd6;--acc:#9a84ff;--line:#4a4180;--sh:#000;--kl:#1f4a63;--pk:#6a5218;--kh:#47336f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Nunito,system-ui,sans-serif}
+h1,h2,h3{font-family:'Baloo 2',Nunito,system-ui,sans-serif;line-height:1.15;margin:0}
+main{max-width:720px;margin:0 auto;padding:14px 14px 40px}
+h1{font-size:2.1rem;font-weight:800}header p{margin:2px 0 10px;color:var(--mut)}
+nav{display:flex;gap:6px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:6px 0;z-index:5}
+button{font-family:inherit;color:var(--ink);cursor:pointer}button:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+nav button{flex:1;padding:10px 2px;border:3px solid var(--ink);background:var(--card);border-radius:14px;font-weight:700;box-shadow:3px 3px 0 var(--sh)}
+nav button[aria-selected=true]{background:var(--acc);color:#fff;transform:translate(2px,2px);box-shadow:1px 1px 0 var(--sh)}
+section{display:none;margin-top:10px}section.on{display:block}
+.card{background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:14px;margin-top:12px;box-shadow:4px 4px 0 var(--sh)}
+.hint{color:var(--mut);font-size:.92rem;margin:4px 0 10px}
+.tg{display:flex;gap:6px;margin-top:10px}.tg button{flex:1;padding:9px;border:3px solid var(--ink);border-radius:12px;background:var(--card);font-weight:800}
+.tg button[aria-pressed=true]{background:var(--sun);color:#1d1647}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.el{border:3px solid transparent;border-radius:10px;padding:3px 0;text-align:center}
+.el b{display:block;font:800 1.2rem 'Baloo 2',sans-serif;line-height:1.1}.el small{font-size:.62rem;color:var(--mut);display:block}
+.el.k{background:var(--kl)}.el.p{background:var(--pk)}.el.h{background:var(--kh)}.el[aria-pressed=true]{border-color:var(--ink)}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.85rem;margin-top:8px}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px}
+.info dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:8px 0}.info dt{color:var(--mut)}.info dd{margin:0;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{padding:7px 12px;border-radius:999px;border:3px solid var(--ink);background:var(--card);font-weight:800}
+.chip[aria-pressed=true]{background:var(--pink);color:#fff}
+.act{margin-top:10px;padding:8px;border-radius:10px;background:var(--kl);font-size:.9rem;text-align:center}
+.stage{display:flex;justify-content:center;align-items:flex-end;height:200px}
+.beaker{width:140px;height:170px;border:4px solid var(--ink);border-top:none;border-radius:0 0 30px 30px;position:relative;overflow:hidden;background:rgba(150,200,230,.15)}
+.beaker.sk{animation:sk .35s 4}@keyframes sk{25%{transform:translateX(-7px) rotate(-3deg)}75%{transform:translateX(7px) rotate(3deg)}}
+.liquid{position:absolute;inset:auto 0 0 0;height:58%;background:#bfe6ef;transition:background 1s}
+.ppt{position:absolute;inset:auto 0 0 0;height:0;transition:height 1.4s .3s}
+.face{position:absolute;left:0;right:0;top:62px;text-align:center;font-size:2.6rem;z-index:2;transition:transform .2s}
+.bub{position:absolute;bottom:0;width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.9);animation:up 1.5s infinite ease-in}
+@keyframes up{to{transform:translateY(-140px);opacity:0}}
+.pt{position:fixed;bottom:34%;font-size:1.7rem;pointer-events:none;animation:pf 1.5s forwards;z-index:9}
+@keyframes pf{to{transform:translateY(-170px) rotate(50deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.bub,.pt,.beaker.sk{animation:none}}
+.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{padding:11px 18px;border:3px solid var(--ink);border-radius:12px;background:var(--acc);color:#fff;font-weight:800;box-shadow:3px 3px 0 var(--sh)}
+.btn.alt{background:var(--card);color:var(--ink)}.btn:disabled{opacity:.45}
+.eq{font:800 1.15rem 'Baloo 2',sans-serif;overflow-x:auto;white-space:nowrap;padding:4px 0}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:800;font-size:.85rem;background:var(--sun);color:#1d1647}
+.mol{display:flex;gap:8px;align-items:flex-start;margin-top:8px}.mol span{font-size:1.8rem}
+.opt{display:block;width:100%;text-align:left;margin-top:8px;padding:11px;border-radius:12px;border:3px solid var(--ink);background:var(--card);font-weight:700}
+.opt.ok{background:color-mix(in srgb,var(--good) 30%,var(--card))}.opt.no{background:color-mix(in srgb,var(--bad) 30%,var(--card))}
+.bar{height:10px;background:var(--line);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pink);transition:width .3s}
+.why{margin-top:10px;padding:10px;border-left:5px solid var(--sun);background:var(--bg);border-radius:6px}
+input{width:100%;padding:10px;border:3px solid var(--ink);border-radius:10px;font:700 1rem Nunito,sans-serif;background:var(--card);color:var(--ink)}
+details.card summary{font:800 1.15rem 'Baloo 2',sans-serif;cursor:pointer}details.card summary span{font-size:1.4rem}
+details.card p{margin:8px 0}details.card ul{margin:6px 0;padding-left:20px}details.card li{margin:3px 0}
+.tip{background:var(--bg);border-left:5px solid var(--sun);border-radius:6px;padding:8px 10px}
+.demo{background:var(--bg);border:3px dashed var(--ink);border-radius:14px;padding:12px;margin-top:10px;text-align:center}
+.at{display:flex;justify-content:space-between;align-items:center;max-width:300px;margin:0 auto;position:relative;transition:max-width .6s}
+.ci{width:72px;height:72px;border-radius:50%;border:3px solid var(--ink);display:grid;place-items:center;font:800 1.3rem 'Baloo 2',sans-serif;background:var(--pk);transition:background .6s}
+.ci.c,.ci.h{background:var(--kl)}
+.eb{position:absolute;left:78px;font-size:1.2rem;transition:left .8s}
+.demo.on .eb{left:calc(100% - 100px)}.demo.on .n{background:#9ec5ff;color:#1d1647}.demo.on .c{background:#ffb0c0;color:#1d1647}
+.demo:not(.on) .y,.demo.on .x{display:none}
+.cv.on .at{max-width:150px}.cv .eb{left:50%;transform:translateX(-50%);opacity:0}.cv.on .eb{left:50%;opacity:1}
+.cap{min-height:4.6em;margin:10px 0 6px;font-weight:700}
+nav{overflow-x:auto}nav button{flex:1 0 auto;font-size:.85rem;white-space:nowrap;padding:10px 9px}
+.gh{margin:18px 0 0;font-size:1.3rem}
+.sp{display:inline-flex;align-items:center;gap:4px;margin:4px 2px;font-weight:800}.sp button{width:30px;height:30px;border:3px solid var(--ink);border-radius:8px;background:var(--card);font-weight:800}
+select{padding:8px;border:3px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);font:700 1rem Nunito,sans-serif}
+.ok2{color:var(--good);font-weight:800}.bad2{color:var(--bad);font-weight:800}
+input[type=range]{padding:0;border:0;accent-color:var(--acc);margin:4px 0 10px}label{font-weight:700}.g2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+</style>
+</head><body><main>
+<header><h1>Toán vui ➗</h1><p>Kiến thức Toán 8 và Toán 9, công cụ giải nhanh và luyện tập.</p></header>
+<div class="card" id="acct" style="display:none;margin-top:0"></div><div class="card" id="asg" style="display:none"></div>
+<nav role="tablist"><button role="tab" aria-selected="true" data-t="t0">Bài học</button><button role="tab" aria-selected="false" data-t="t2">Thực hành</button><button role="tab" aria-selected="false" data-t="t3">Luyện tập</button><button role="tab" aria-selected="false" data-t="t4">Kết quả</button></nav>
+<section id="t0" class="on"><div id="les"></div></section>
+<section id="t2"><div id="sk"><p class="hint">Năm công cụ giúp bạn kiểm tra và hiểu bài.</p>
+<details class="card" open><summary><span>🧮</span> A. Giải phương trình bậc hai</summary><div id="sA"></div></details>
+<details class="card"><summary><span>📈</span> B. Vẽ đồ thị hàm số</summary><div id="sB"></div></details>
+<details class="card"><summary><span>⚖️</span> C. Giải hệ hai phương trình</summary><div id="sC"></div></details>
+<details class="card"><summary><span>📐</span> D. Tam giác vuông</summary><div id="sD"></div></details>
+<details class="card"><summary><span>√</span> E. Rút gọn căn bậc hai</summary><div id="sE"></div></details>
+</div></section>
+<section id="t3"><div class="card" id="quiz"></div></section>
+<section id="t4"><div class="card" id="rs"></div></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),sub=s=>s;
+const rnd=a=>a[Math.floor(Math.random()*a.length)],shuf=a=>[...a].sort(()=>Math.random()-.5),fm=x=>(+(+x).toFixed(3)).toString().replace('.',','),ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+function spawn(e,n){for(let i=0;i<n;i++){const s=document.createElement('span');s.className='pt';s.textContent=e;s.style.left=(15+Math.random()*70)+'vw';s.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),2200)}}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t))});
+/* ===== Kết nối hệ thống "Ai vui hơn học sinh THCS" (đăng nhập chung, cùng Supabase) ===== */
+const SB_URL='https://ipurdwafbuqilgwwlkic.supabase.co',SB_KEY='sb_publishable_-UPds1t0kDY5VKlWOZHncQ_kJg-X0CJ',VN='https://aivuihonhocsinhthcs.vercel.app/',SUBJ='toan';
+let sb=null,ME=null,NAME='',MEM={};
+const P=new URLSearchParams(location.search),TASK=P.get('task'),PASS=+P.get('pass')||70;
+function jwt(t){try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')))}catch(e){return null}}
+(function(){ /* nhận phiên đăng nhập từ app chính qua #at=..., chỉ dùng access token (khoảng 1 giờ) */
+  const h=new URLSearchParams(location.hash.slice(1));let at=h.get('at');
+  if(location.hash.indexOf('at=')>=0)history.replaceState(null,'',location.pathname+location.search);
+  try{if(at)sessionStorage.setItem('avh_at',at);else at=sessionStorage.getItem('avh_at')}catch(e){}
+  const p=at&&jwt(at);
+  if(p&&p.exp*1000>Date.now()&&window.supabase){
+    try{sb=supabase.createClient(SB_URL,SB_KEY,{global:{headers:{Authorization:'Bearer '+at}},auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});ME=p.sub}catch(e){sb=null;ME=null}
+  }
+})();
+async function acct(){const a=$('#acct');a.style.display='block';
+if(!sb||!ME){a.innerHTML=`Bạn chưa đăng nhập nên điểm chưa được lưu. <a href="${VN}">Mở Việc nhà để đăng nhập</a>, rồi bấm 📚 Học cùng → Toán vui.`;return}
+try{const {data}=await sb.from('profiles').select('id,name');(data||[]).forEach(m=>MEM[m.id]=m.name);NAME=MEM[ME]||'bạn';
+a.innerHTML=`👋 Xin chào <b>${esc(NAME)}</b>! Điểm của bạn sẽ được lưu. <a href="${VN}">← Về Việc nhà</a>`}catch(e){a.textContent='Không kết nối được máy chủ. Bạn vẫn học bình thường nhưng điểm sẽ không được lưu.'}}
+async function save(topic,score,total,taskDone){
+if(!sb||!ME)return 'Chưa đăng nhập nên chưa lưu được.';
+try{const r=await sb.from('subject_scores').upsert({user_id:ME,subject:SUBJ,item:topic,score:total==null?1:score,max:total==null?1:total,updated_at:new Date().toISOString()},{onConflict:'user_id,subject,item'});if(r.error)throw r.error;
+if(TASK&&taskDone){const u=await sb.from('tasks').update({done:true}).eq('id',TASK);if(u.error)throw u.error;return 'Đã lưu kết quả và báo hoàn thành cho Việc nhà ✅'}
+return 'Đã lưu kết quả.'}catch(e){return 'Lưu lỗi: '+e.message+' (đã chạy scores.sql chưa?)'}}
+async function finish(btn,topic){btn.disabled=true;const m=await save(topic,null,null,true);btn.parentElement.nextElementSibling.textContent=m;if(m.includes('✅'))spawn('🎉',8)}
+
+const ST={a:'Tất cả',l:'Lý thuyết',c:'Tính toán'};
+let qt='a',qn=10,qi=0,sc=0,qs=[],qrun=false,curTest=null;
+/* ===== Bài học ===== */
+const LS=[
+['🧩','Hằng đẳng thức và phân tích đa thức',8,`<ul><li>(a + b)² = a² + 2ab + b²; (a − b)² = a² − 2ab + b²; <b>a² − b² = (a − b)(a + b)</b>.</li><li>(a + b)³ = a³ + 3a²b + 3ab² + b³; a³ + b³ = (a + b)(a² − ab + b²); a³ − b³ = (a − b)(a² + ab + b²).</li><li><b>Phân tích thành nhân tử:</b> đặt nhân tử chung, dùng hằng đẳng thức, nhóm hạng tử. Ví dụ: x² − 9 = (x − 3)(x + 3).</li></ul><p class="tip">💡 Phân tích xong, hãy nhân lại để kiểm tra kết quả.</p>`],
+['➗','Phân thức đại số',8,`<ul><li>Phân thức A/B có nghĩa khi <b>B ≠ 0</b> (điều kiện xác định).</li><li><b>Rút gọn:</b> phân tích tử và mẫu thành nhân tử, rồi triệt tiêu nhân tử chung.</li><li>Cộng, trừ: quy đồng mẫu. Nhân: tử nhân tử, mẫu nhân mẫu. Chia: nhân với phân thức nghịch đảo.</li></ul><p class="tip">💡 Luôn đặt điều kiện xác định trước khi rút gọn.</p>`],
+['📈','Hàm số bậc nhất y = ax + b',8,`<ul><li>Hàm số y = ax + b (a ≠ 0): a &gt; 0 đồng biến, a &lt; 0 nghịch biến. a là <b>hệ số góc</b>.</li><li>Đồ thị là đường thẳng cắt Oy tại (0; b), cắt Ox tại (−b/a; 0).</li><li>Hai đường thẳng y = ax + b và y = a₂x + b₂: <b>song song</b> khi a = a₂ và b ≠ b₂; <b>cắt nhau</b> khi a ≠ a₂; <b>trùng nhau</b> khi a = a₂ và b = b₂; <b>vuông góc</b> khi a·a₂ = −1.</li></ul><p class="tip">💡 Thử vẽ đồ thị ở tab Thực hành, công cụ B.</p>`],
+['⚖️','Phương trình và bất phương trình bậc nhất',8,`<ul><li>ax + b = 0 (a ≠ 0) có nghiệm x = −b/a.</li><li><b>Phương trình tích:</b> A·B = 0 ⇔ A = 0 hoặc B = 0.</li><li><b>Giải bài toán bằng cách lập phương trình:</b> chọn ẩn và đặt điều kiện → biểu diễn các đại lượng → lập phương trình → giải → đối chiếu điều kiện.</li><li><b>Bất phương trình:</b> khi nhân hoặc chia hai vế với số âm thì <b>đổi chiều</b>. Ví dụ −2x &gt; 6 ⇔ x &lt; −3.</li></ul>`],
+['📐','Định lí Pythagore và tứ giác',8,`<ul><li><b>Pythagore:</b> tam giác vuông có a² + b² = c² (c là cạnh huyền). Định lí đảo cũng đúng.</li><li><b>Hình bình hành:</b> hai cặp cạnh đối song song; hai đường chéo cắt nhau tại trung điểm.</li><li><b>Hình chữ nhật:</b> bốn góc vuông; hai đường chéo bằng nhau. <b>Hình thoi:</b> bốn cạnh bằng nhau; hai đường chéo vuông góc.</li><li><b>Hình vuông</b> vừa là hình chữ nhật vừa là hình thoi.</li></ul><p class="tip">💡 Bộ ba hay gặp: (3; 4; 5), (5; 12; 13), (8; 15; 17).</p>`],
+['🔺','Định lí Thalès và tam giác đồng dạng',8,`<ul><li><b>Thalès:</b> DE ∥ BC thì AD/AB = AE/AC = DE/BC. Định lí đảo cũng đúng.</li><li><b>Đường phân giác trong:</b> DB/DC = AB/AC.</li><li><b>Tam giác đồng dạng:</b> g.g, c.g.c, c.c.c. Tỉ số đồng dạng k thì tỉ số chu vi là k, tỉ số diện tích là k².</li></ul>`],
+['📊','Thống kê và xác suất',8,`<ul><li>Biểu diễn dữ liệu bằng bảng, biểu đồ cột, biểu đồ tròn, biểu đồ đoạn thẳng.</li><li><b>Xác suất thực nghiệm</b> = số lần xảy ra / tổng số lần thử.</li><li><b>Xác suất cổ điển</b> P = số kết quả thuận lợi / tổng số kết quả có thể (các kết quả đồng khả năng). 0 ≤ P ≤ 1.</li></ul><p class="tip">💡 Biến cố chắc chắn có P = 1, biến cố không thể có P = 0.</p>`],
+['√','Căn bậc hai và căn bậc ba',9,`<ul><li>√A có nghĩa khi A ≥ 0. <b>√(A²) = |A|</b>.</li><li>√(AB) = √A·√B; √(A/B) = √A/√B (A, B ≥ 0).</li><li><b>Đưa thừa số ra ngoài:</b> √(a²b) = |a|√b. Ví dụ √72 = 6√2.</li><li><b>Trục căn ở mẫu:</b> 1/√a = √a/a.</li><li>Căn bậc ba: ∛(a³) = a với mọi số thực a.</li></ul><p class="tip">💡 Thử công cụ E để rút gọn căn nhanh.</p>`],
+['🔗','Hệ hai phương trình bậc nhất hai ẩn',9,`<p>Hệ: a₁x + b₁y = c₁ và a₂x + b₂y = c₂.</p><ul><li><b>Phương pháp thế:</b> rút một ẩn từ phương trình này, thế vào phương trình kia.</li><li><b>Phương pháp cộng:</b> nhân hệ số cho phù hợp rồi cộng hoặc trừ hai vế.</li><li>Số nghiệm: a₁/a₂ ≠ b₁/b₂ → 1 nghiệm; a₁/a₂ = b₁/b₂ ≠ c₁/c₂ → vô nghiệm; cả ba tỉ số bằng nhau → vô số nghiệm.</li></ul><p class="tip">💡 Hệ phương trình ứng dụng trong bài toán chuyển động, năng suất, tìm hai số.</p>`],
+['🧮','Phương trình bậc hai và định lí Viète',9,`<ul><li>ax² + bx + c = 0 (a ≠ 0), <b>Δ = b² − 4ac</b>.</li><li>Δ &gt; 0: hai nghiệm x = (−b ± √Δ)/(2a). Δ = 0: nghiệm kép x = −b/(2a). Δ &lt; 0: vô nghiệm.</li><li><b>Viète:</b> x₁ + x₂ = −b/a; x₁x₂ = c/a.</li><li>Nhẩm nghiệm: a + b + c = 0 thì x₁ = 1, x₂ = c/a. a − b + c = 0 thì x₁ = −1, x₂ = −c/a.</li></ul><p class="tip">💡 Kiểm tra nghiệm bằng Viète: tổng và tích phải khớp.</p>`],
+['🥣','Hàm số y = ax²',9,`<ul><li>Đồ thị là <b>parabol</b> đỉnh O(0; 0), nhận trục Oy làm trục đối xứng.</li><li>a &gt; 0: bề lõm hướng lên, y nhỏ nhất bằng 0. a &lt; 0: bề lõm hướng xuống, y lớn nhất bằng 0.</li><li>a &gt; 0: hàm số nghịch biến khi x &lt; 0, đồng biến khi x &gt; 0 (a &lt; 0 thì ngược lại).</li><li>Giao điểm của đường thẳng và parabol: giải phương trình hoành độ giao điểm.</li></ul>`],
+['📏','Hệ thức lượng trong tam giác vuông',9,`<p>Tam giác ABC vuông tại A, đường cao AH. Đặt BC = a, AC = b, AB = c, BH = c′, CH = b′, AH = h.</p><ul><li>b² = a·b′; c² = a·c′; <b>h² = b′·c′</b>; a·h = b·c; 1/h² = 1/b² + 1/c².</li><li><b>sin</b> = đối / huyền; <b>cos</b> = kề / huyền; <b>tan</b> = đối / kề; <b>cot</b> = kề / đối.</li><li>sin²α + cos²α = 1. sin góc này bằng cos góc phụ với nó.</li></ul><p class="tip">💡 Nhớ: "sin đi học, cos không hư, tan đoàn kết, cot kết đoàn".</p>`],
+['⭕','Đường tròn',9,`<ul><li>Góc ở tâm có số đo bằng số đo cung bị chắn. <b>Góc nội tiếp bằng nửa số đo cung bị chắn</b>.</li><li>Các góc nội tiếp cùng chắn một cung thì bằng nhau. Góc nội tiếp chắn nửa đường tròn bằng 90°.</li><li><b>Tiếp tuyến</b> vuông góc với bán kính tại tiếp điểm. Hai tiếp tuyến cắt nhau thì điểm đó cách đều hai tiếp điểm.</li><li>Tứ giác nội tiếp có tổng hai góc đối bằng 180°.</li><li>Chu vi C = 2πR; diện tích S = πR².</li></ul>`],
+['🥫','Hình trụ, hình nón, hình cầu',9,`<ul><li><b>Hình trụ:</b> S<sub>xq</sub> = 2πrh; V = πr²h.</li><li><b>Hình nón:</b> S<sub>xq</sub> = πrl; V = ⅓πr²h; l² = r² + h².</li><li><b>Hình cầu:</b> S = 4πR²; V = ⁴⁄₃πR³.</li></ul><p class="tip">💡 Thể tích hình nón bằng một phần ba thể tích hình trụ cùng đáy và chiều cao.</p>`]];
+$('#les').innerHTML='<p class="hint">Chạm vào từng bài để mở. Mỗi bài có một mẹo nhớ 💡</p>'+LS.map((l,i)=>(i==0||LS[i-1][2]!=l[2]?`<h2 class="gh">Toán ${l[2]}</h2>`:'')+`<details class="card"${i==0?' open':''}><summary><span>${l[0]}</span> ${i+1}. ${l[1]}</summary>${l[3]}<div class="row"><button class="btn" onclick="lessonTest(${i})">📝 Kiểm tra 20 câu</button></div></details>`).join('');
+/* ===== Thực hành ===== */
+const SKL=['Giải phương trình bậc hai','Vẽ đồ thị hàm số','Giải hệ hai phương trình','Tam giác vuông','Rút gọn căn bậc hai'];
+const num=(id)=>parseFloat($('#'+id).value);
+$('#sA').innerHTML=`<p class="hint">Nhập hệ số của ax² + bx + c = 0.</p><div class="g2"><input id="qa" type="number" step="any" placeholder="a" oninput="solA()"><input id="qb" type="number" step="any" placeholder="b" oninput="solA()"><input id="qc" type="number" step="any" placeholder="c" oninput="solA()"></div><div id="qr" style="margin-top:8px"></div>`;
+function solA(){const a=num('qa'),b=num('qb'),c=num('qc');if([a,b,c].some(isNaN)){$('#qr').textContent='';return}
+if(a==0){$('#qr').innerHTML=b==0?'Không phải phương trình bậc hai.':`a = 0 nên đây là phương trình bậc nhất: x = ${fm(-c/b)}.`;return}
+const D=b*b-4*a*c;let h=`Δ = b² − 4ac = (${fm(b)})² − 4·(${fm(a)})·(${fm(c)}) = <b>${fm(D)}</b><br>`;
+if(D>0){const s=Math.sqrt(D),x1=(-b+s)/(2*a),x2=(-b-s)/(2*a);h+=`Δ &gt; 0: hai nghiệm phân biệt<br>x₁ = ${fm(x1)}, x₂ = ${fm(x2)}<br>Viète: x₁ + x₂ = ${fm(-b/a)}, x₁·x₂ = ${fm(c/a)}`}
+else if(D==0)h+=`Δ = 0: nghiệm kép x = ${fm(-b/(2*a))}`;else h+='Δ &lt; 0: phương trình vô nghiệm.';
+$('#qr').innerHTML=h}
+$('#sB').innerHTML=`<select id="gt" onchange="graph()"><option value="1">Hàm bậc nhất y = ax + b</option><option value="2">Parabol y = ax² + b</option></select><p></p><label>a = <b id="va">1</b></label><input type="range" id="ga" min="-5" max="5" step="0.5" value="1" oninput="graph()"><label>b = <b id="vb">0</b></label><input type="range" id="gb" min="-5" max="5" step="0.5" value="0" oninput="graph()"><div style="text-align:center" id="gs"></div><p id="gi"></p>`;
+function graph(){const t=$('#gt').value,a=num('ga'),b=num('gb'),S=20;$('#va').textContent=fm(a);$('#vb').textContent=fm(b);
+let g='';for(let i=0;i<=260;i+=20)g+=`<line x1="${i}" y1="0" x2="${i}" y2="260" stroke="#9996" stroke-width="${i==130?2:.5}"/><line x1="0" y1="${i}" x2="260" y2="${i}" stroke="#9996" stroke-width="${i==130?2:.5}"/>`;
+const pts=[];for(let x=-6.5;x<=6.5;x+=.1){const y=t=='1'?a*x+b:a*x*x+b;pts.push(`${(130+x*S).toFixed(1)},${(130-y*S).toFixed(1)}`)}
+$('#gs').innerHTML=`<svg viewBox="0 0 260 260" style="width:100%;max-width:320px;background:var(--bg);border:3px solid var(--ink);border-radius:12px">${g}<polyline points="${pts.join(' ')}" fill="none" stroke="#ff5c8a" stroke-width="3"/></svg>`;
+$('#gi').innerHTML=t=='1'?`y = ${fm(a)}x ${b<0?'−':'+'} ${fm(Math.abs(b))}<br>Cắt Oy tại (0; ${fm(b)})${a!=0?`, cắt Ox tại (${fm(-b/a)}; 0)`:''}<br>${a>0?'Hàm số đồng biến':a<0?'Hàm số nghịch biến':'Hàm số hằng'}`:`y = ${fm(a)}x² ${b<0?'−':'+'} ${fm(Math.abs(b))}<br>Đỉnh (0; ${fm(b)}), bề lõm hướng ${a>0?'lên':a<0?'xuống':'(a = 0: đường thẳng)'}`}graph();
+$('#sC').innerHTML=`<p class="hint">Nhập hệ số của a₁x + b₁y = c₁ và a₂x + b₂y = c₂.</p><div class="g2"><input id="h1" type="number" step="any" placeholder="a₁" oninput="solC()"><input id="h2" type="number" step="any" placeholder="b₁" oninput="solC()"><input id="h3" type="number" step="any" placeholder="c₁" oninput="solC()"><input id="h4" type="number" step="any" placeholder="a₂" oninput="solC()"><input id="h5" type="number" step="any" placeholder="b₂" oninput="solC()"><input id="h6" type="number" step="any" placeholder="c₂" oninput="solC()"></div><div id="hr" style="margin-top:8px"></div>`;
+function solC(){const [a1,b1,c1,a2,b2,c2]=[1,2,3,4,5,6].map(i=>num('h'+i));if([a1,b1,c1,a2,b2,c2].some(isNaN)){$('#hr').textContent='';return}
+const D=a1*b2-a2*b1,Dx=c1*b2-c2*b1,Dy=a1*c2-a2*c1;
+$('#hr').innerHTML=D!=0?`D = ${fm(D)}, Dx = ${fm(Dx)}, Dy = ${fm(Dy)}<br>Hệ có nghiệm duy nhất: <b>x = ${fm(Dx/D)}, y = ${fm(Dy/D)}</b>`:(Dx==0&&Dy==0?'Hệ có vô số nghiệm (hai đường thẳng trùng nhau).':'Hệ vô nghiệm (hai đường thẳng song song).')}
+$('#sD').innerHTML=`<select id="pm" onchange="solD()"><option value="h">Biết hai cạnh góc vuông, tìm cạnh huyền</option><option value="g">Biết cạnh huyền và một cạnh góc vuông, tìm cạnh còn lại</option></select><div class="g2" style="margin-top:6px"><input id="pa" type="number" step="any" placeholder="cạnh 1" oninput="solD()"><input id="pb" type="number" step="any" placeholder="cạnh 2" oninput="solD()"></div><p class="hint">Với chế độ thứ hai, nhập cạnh huyền ở ô thứ nhất.</p><div id="pr"></div>`;
+function solD(){const m=$('#pm').value,a=num('pa'),b=num('pb');if(isNaN(a)||isNaN(b)||a<=0||b<=0){$('#pr').textContent='';return}
+if(m=='g'&&b>=a){$('#pr').textContent='Cạnh huyền phải lớn hơn cạnh góc vuông.';return}
+const x=m=='h'?Math.hypot(a,b):Math.sqrt(a*a-b*b),leg=m=='h'?a:b,hyp=m=='h'?x:a,ang=Math.asin(leg/hyp)*180/Math.PI;
+$('#pr').innerHTML=(m=='h'?`c² = ${fm(a)}² + ${fm(b)}² = ${fm(a*a+b*b)} nên c = <b>${fm(x)}</b>`:`b² = ${fm(a)}² − ${fm(b)}² = ${fm(a*a-b*b)} nên b = <b>${fm(x)}</b>`)+`<br>Góc nhọn đối diện cạnh ${fm(leg)} ≈ <b>${fm(ang)}°</b> (sin = ${fm(leg/hyp)})`}
+$('#sE').innerHTML=`<p class="hint">Nhập một số nguyên dương n để rút gọn √n.</p><input id="en" type="number" min="1" step="1" placeholder="n" oninput="solE()"><div id="er" style="margin-top:8px"></div>`;
+function solE(){const n=Math.round(num('en'));if(isNaN(n)||n<1){$('#er').textContent='';return}let f=1;for(let k=2;k*k<=n;k++)while(n%(k*k*f*f)==0&&false);let o=1,r=n;for(let k=2;k*k<=r;k++)while(r%(k*k)==0){o*=k;r/=k*k}
+const cb=Math.round(Math.cbrt(n));$('#er').innerHTML=(r==1?`√${n} = <b>${o}</b>`:o==1?`√${n} không rút gọn được ≈ ${fm(Math.sqrt(n))}`:`√${n} = √(${o*o}·${r}) = <b>${o}√${r}</b> ≈ ${fm(Math.sqrt(n))}`)+(cb**3==n?`<br>∛${n} = <b>${cb}</b>`:'')}
+/* ===== Câu hỏi ===== */
+const Q=[
+['l','(a + b)² bằng biểu thức nào?',['a² + 2ab + b²','a² + b²','a² − 2ab + b²','2a² + 2b²'],0,'Bình phương của một tổng: a² + 2ab + b².'],
+['l','a² − b² bằng biểu thức nào?',['(a − b)(a + b)','(a − b)²','(a + b)²','a(a − b)'],0,'Hiệu hai bình phương: a² − b² = (a − b)(a + b).'],
+['l','Hàm số y = 2x − 3 có hệ số góc bằng bao nhiêu?',['2','−3','3','−2'],0,'Hệ số góc là hệ số a của x.'],
+['l','Đồ thị hàm số y = ax + b cắt trục tung tại điểm nào?',['(0; b)','(b; 0)','(0; a)','(−b/a; 0)'],0,'Khi x = 0 thì y = b.'],
+['l','Hai đường thẳng y = ax + b và y = a₂x + b₂ song song khi nào?',['a = a₂ và b ≠ b₂','a = a₂ và b = b₂','a ≠ a₂','a·a₂ = −1'],0,'Cùng hệ số góc, khác tung độ gốc.'],
+['l','Định lí Pythagore cho tam giác vuông có cạnh huyền c:',['a² + b² = c²','a + b = c','a² − b² = c²','a·b = c'],0,'Bình phương cạnh huyền bằng tổng bình phương hai cạnh góc vuông.'],
+['l','Cho DE ∥ BC (D thuộc AB, E thuộc AC). Theo định lí Thalès:',['AD/AB = AE/AC','AD/DB = AB/AC','AD·AE = AB·AC','AD + AE = AB + AC'],0,'Các đoạn thẳng tương ứng tỉ lệ: AD/AB = AE/AC.'],
+['l','√(a²) bằng bao nhiêu?',['|a|','a','−a','a²'],0,'Căn bậc hai số học luôn không âm nên √(a²) = |a|.'],
+['l','Phương trình bậc hai có hai nghiệm phân biệt khi nào?',['Δ > 0','Δ = 0','Δ < 0','Δ ≥ 0'],0,'Δ > 0 cho hai nghiệm phân biệt, Δ = 0 cho nghiệm kép.'],
+['l','Theo Viète, tổng hai nghiệm x₁ + x₂ của ax² + bx + c = 0 bằng:',['−b/a','b/a','c/a','−c/a'],0,'x₁ + x₂ = −b/a và x₁·x₂ = c/a.'],
+['l','Đồ thị hàm số y = ax² với a > 0 là:',['Parabol bề lõm hướng lên','Đường thẳng','Parabol bề lõm hướng xuống','Đường hypebol'],0,'a > 0 thì parabol quay bề lõm lên trên.'],
+['l','Tam giác ABC vuông tại A, đường cao AH. Hệ thức nào đúng?',['AH² = BH·CH','AH² = AB·AC','AH = BH + CH','AB² = BH·CH'],0,'h² = b′·c′ (bình phương đường cao bằng tích hai hình chiếu).'],
+['l','sin của một góc nhọn trong tam giác vuông bằng:',['Cạnh đối / cạnh huyền','Cạnh kề / cạnh huyền','Cạnh đối / cạnh kề','Cạnh kề / cạnh đối'],0,'sin = đối / huyền.'],
+['l','Góc nội tiếp có số đo bằng bao nhiêu so với cung bị chắn?',['Một nửa','Bằng','Gấp đôi','Một phần ba'],0,'Góc nội tiếp bằng nửa số đo cung bị chắn.'],
+['l','Tiếp tuyến của đường tròn vuông góc với đường nào?',['Bán kính tại tiếp điểm','Một dây cung bất kì','Đường kính bất kì','Tiếp tuyến khác'],0,'Tiếp tuyến vuông góc với bán kính đi qua tiếp điểm.'],
+['l','Nhân hai vế của bất phương trình với một số âm thì:',['Đổi chiều bất phương trình','Giữ nguyên chiều','Đổi dấu hai vế nhưng giữ chiều','Bất phương trình vô nghiệm'],0,'Nhân hoặc chia với số âm thì đổi chiều.'],
+['l','Xác suất của một biến cố chắc chắn bằng:',['1','0','0,5','Không xác định'],0,'Biến cố chắc chắn luôn xảy ra nên P = 1.']];
+const mk=(g,q,c,ds,ex)=>{const o=[c];ds.forEach(d=>{if(d&&!o.includes(d)&&o.length<4)o.push(d)});return [g,q,o,0,ex]};
+const G=(q,c,ds,ex)=>{const n=typeof c=='number',cs=n?fm(c):c;let L=[...shuf(ds.map(x=>typeof x=='number'?fm(x):x)),...(n?shuf([c+1,c-1,c+2,c-2,c*2,-c]).map(fm):[])];
+if(!n){const pi=/π$/.test(cs),fr=/^\d+\/\d+$/.test(cs),v=parseFloat(cs),[p,r]=fr?cs.split('/').map(Number):[0,0];L=L.concat(pi?[v*2,v+2,v-2,v+1,v-1,v*3].map(x=>fm(x)+'π'):fr?[`${p+1}/${r}`,`${p}/${r+1}`,`${r}/${p}`,`${p+1}/${r+1}`]:[])}
+return mk('c',q,cs,L,ex)};
+const sg=x=>x<0?'−':'+';
+const TR=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]];
+const GC=[
+()=>{const x=ri(-9,9),a=rnd([2,3,4,5,6,-2,-3,-4]),b=ri(-9,9),c=a*x+b;return G(`Giải phương trình ${a}x ${sg(b)} ${Math.abs(b)} = ${c}. Nghiệm x là bao nhiêu?`,x,[(c+b)/a,(c-b)*a],`${a}x = ${c} ${b<0?'+':'−'} ${Math.abs(b)} = ${c-b}, nên x = ${x}.`)},
+()=>{const a=ri(2,9);return rnd([0,1])?G(`Khai triển (x + ${a})² được x² + ?x + ${a*a}. Hệ số của x là bao nhiêu?`,2*a,[a,a*a],`(x + ${a})² = x² + 2·${a}·x + ${a*a}.`):G(`Khai triển (x − ${a})(x + ${a}) được x² − ?. Số cần điền là bao nhiêu?`,a*a,[2*a,a],`(x − ${a})(x + ${a}) = x² − ${a*a}.`)},
+()=>{const a=ri(31,99),b=ri(11,a-1);return G(`Tính nhanh ${a}² − ${b}².`,a*a-b*b,[(a-b)**2,a*a+b*b,(a-b)*a],`${a}² − ${b}² = (${a} − ${b})(${a} + ${b}) = ${a-b}·${a+b} = ${a*a-b*b}.`)},
+()=>{const a=rnd([2,3,4,5,-2,-3]),b=ri(-8,8),k=ri(-5,6);return G(`Cho hàm số y = ${a}x ${sg(b)} ${Math.abs(b)}. Tính y khi x = ${k}.`,a*k+b,[a*k-b,(a+b)*k,a+k+b],`y = ${a}·(${k}) ${sg(b)} ${Math.abs(b)} = ${a*k+b}.`)},
+()=>{const a=rnd([2,3,4,-2,-3,-4]),x0=rnd([-5,-4,-3,-2,-1,1,2,3,4,5]),b=-a*x0;return G(`Đường thẳng y = ${a}x ${sg(b)} ${Math.abs(b)} cắt trục hoành tại điểm có hoành độ bao nhiêu?`,x0,[b,-x0,a],`Cho y = 0: ${a}x = ${-b} nên x = ${x0}.`)},
+()=>{const [a,b,c]=rnd(TR),k=ri(1,3);return rnd([0,1])?G(`Tam giác vuông có hai cạnh góc vuông ${a*k} và ${b*k}. Cạnh huyền bằng bao nhiêu?`,c*k,[a*k+b*k,(a+b)*k-1],`c² = ${a*k}² + ${b*k}² = ${(c*k)**2} nên c = ${c*k}.`):G(`Tam giác vuông có cạnh huyền ${c*k} và một cạnh góc vuông ${a*k}. Cạnh góc vuông còn lại bằng bao nhiêu?`,b*k,[c*k-a*k,c*k+a*k],`b² = ${c*k}² − ${a*k}² = ${(b*k)**2} nên b = ${b*k}.`)},
+()=>{const a=ri(2,6),b=rnd([2,3,5,6,7]),n=a*a*b;return G(`Rút gọn √${n}.`,`${a}√${b}`,[`${b}√${a}`,`${a*b}`,`√${n}`,`${a+b}√${b}`,`${a}√${b+1}`],`${n} = ${a*a}·${b} nên √${n} = ${a}√${b}.`)},
+()=>{const r1=ri(-6,6),r2=ri(-6,6),k=rnd([0,1,2]);if(r1==r2)return GC[7]();const s=r1+r2,p=r1*r2,eq=`x² ${sg(-s)} ${Math.abs(s)}x ${sg(p)} ${Math.abs(p)} = 0`;return k==0?G(`Phương trình ${eq} có tổng hai nghiệm bằng bao nhiêu?`,s,[-s,p],`Viète: x₁ + x₂ = −b/a = ${s}.`):k==1?G(`Phương trình ${eq} có tích hai nghiệm bằng bao nhiêu?`,p,[-p,s],`Viète: x₁·x₂ = c/a = ${p}.`):G(`Nghiệm lớn hơn của phương trình ${eq} là bao nhiêu?`,Math.max(r1,r2),[Math.min(r1,r2),s,p],`Nghiệm là ${r1} và ${r2}.`)},
+()=>{const a=ri(1,5),b=ri(-8,8),c=ri(-6,6),D=b*b-4*a*c;return G(`Tính biệt thức Δ của phương trình ${a}x² ${sg(b)} ${Math.abs(b)}x ${sg(c)} ${Math.abs(c)} = 0.`,D,[b*b+4*a*c,b*b-2*a*c,-b*b-4*a*c],`Δ = b² − 4ac = ${b*b} − 4·${a}·(${c}) = ${D}.`)},
+()=>{const x=ri(-5,5),y=ri(-5,5);let a1,b1,a2,b2;do{a1=ri(1,4);b1=ri(1,4);a2=ri(1,4);b2=ri(-4,-1)}while(a1*b2-a2*b1==0);const c1=a1*x+b1*y,c2=a2*x+b2*y;return G(`Hệ phương trình ${a1}x + ${b1}y = ${c1} và ${a2}x ${sg(b2)} ${Math.abs(b2)}y = ${c2} có nghiệm x bằng bao nhiêu?`,x,[y,x+y,x-y],`Giải hệ ta được x = ${x}, y = ${y} (thay lại hai phương trình để kiểm tra).`)},
+()=>{const [o,a,h]=rnd(TR),w=rnd([[0,'sin B'],[1,'cos B'],[2,'tan B']]);const ans=[`${o}/${h}`,`${a}/${h}`,`${o}/${a}`][w[0]];return G(`Tam giác ABC vuông tại A có AC = ${o}, AB = ${a}, BC = ${h}. Tính ${w[1]}.`,ans,[`${o}/${h}`,`${a}/${h}`,`${o}/${a}`,`${a}/${o}`,`${h}/${o}`].filter(x=>x!=ans),`${w[1]} = ${['đối / huyền = AC / BC','kề / huyền = AB / BC','đối / kề = AC / AB'][w[0]]} = ${ans}.`)},
+()=>{const r=ri(2,9),k=ri(0,3),ang=rnd([40,60,80,100,120,140]);return k==0?G(`Đường tròn bán kính ${r} cm. Chu vi bằng bao nhiêu (theo π)?`,`${2*r}π`,[`${r}π`,`${r*r}π`,`${4*r}π`],`C = 2πR = ${2*r}π cm.`):k==1?G(`Đường tròn bán kính ${r} cm. Diện tích bằng bao nhiêu (theo π)?`,`${r*r}π`,[`${2*r}π`,`${r}π`,`${r*r*2}π`],`S = πR² = ${r*r}π cm².`):G(`Góc ở tâm chắn một cung bằng ${ang}°. Góc nội tiếp cùng chắn cung đó bằng bao nhiêu độ?`,ang/2,[ang,ang*2,180-ang],`Góc nội tiếp bằng nửa góc ở tâm: ${ang}° / 2 = ${ang/2}°.`)},
+()=>{const r=rnd([3,6]),h=rnd([3,6,9]),k=rnd([0,1,2]);return k==0?G(`Hình trụ có bán kính đáy ${r} cm, chiều cao ${h} cm. Thể tích bằng bao nhiêu (theo π)?`,`${r*r*h}π`,[`${2*r*h}π`,`${r*h}π`,`${r*r*h/3}π`],`V = πr²h = π·${r}²·${h} = ${r*r*h}π cm³.`):k==1?G(`Hình nón có bán kính đáy ${r} cm, chiều cao ${h} cm. Thể tích bằng bao nhiêu (theo π)?`,`${r*r*h/3}π`,[`${r*r*h}π`,`${2*r*h}π`,`${r*h/3}π`],`V = ⅓πr²h = ⅓·π·${r}²·${h} = ${r*r*h/3}π cm³.`):G(`Hình cầu có bán kính ${r} cm. Thể tích bằng bao nhiêu (theo π)?`,`${4*r**3/3}π`,[`${4*r*r}π`,`${r**3}π`,`${4*r**3}π`],`V = ⁴⁄₃πR³ = ⁴⁄₃·π·${r}³ = ${4*r**3/3}π cm³.`)},
+()=>{const a=ri(2,9),b=ri(2,9);return rnd([0,1])?G(`Hộp có ${a} bi đỏ và ${b} bi xanh. Lấy ngẫu nhiên một bi. Xác suất lấy được bi đỏ là bao nhiêu?`,`${a/gcd(a,a+b)}/${(a+b)/gcd(a,a+b)}`,[`${b/gcd(b,a+b)}/${(a+b)/gcd(b,a+b)}`,`${a/gcd(a,b)}/${b/gcd(a,b)}`,`1/${a+b}`,`${a}/${b+1}`],`P = số bi đỏ / tổng số bi = ${a}/${a+b} (rút gọn nếu được).`):(()=>{const m=ri(4,9),v=Array.from({length:5},()=>ri(m-3,m+3)),s=v.reduce((x,y)=>x+y,0),mean=s/5;return G(`Điểm 5 bài kiểm tra là ${v.join('; ')}. Điểm trung bình cộng là bao nhiêu?`,mean,[s,Math.max(...v),mean*5/4],`Trung bình = ${s} / 5 = ${fm(mean)}.`)})()},
+()=>{const a=rnd([1,2,3,-1,-2]),x=ri(-4,4)||2;return G(`Điểm có hoành độ ${x} trên parabol y = ${a}x² có tung độ bằng bao nhiêu?`,a*x*x,[a*x,(a*x)**2,a*2*x],`y = ${a}·${x}² = ${a*x*x}.`)},
+()=>{const a=rnd([2,3,4,-2,-3]),x0=rnd([-4,-3,-2,2,3,4]),b=ri(-6,6),c=a*x0+b,g=a>0?'>':'<',r=`x ${g} ${x0}`;return mk('c',`Giải bất phương trình ${a}x ${sg(b)} ${Math.abs(b)} > ${c}.`,r,[`x ${g=='>'?'<':'>'} ${x0}`,`x > ${-x0}`,`x < ${-x0}`],`${a}x > ${c-b} nên ${a>0?'x > '+x0:'x < '+x0}${a<0?' (đổi chiều vì chia cho số âm)':''}.`)},
+()=>{const AD=rnd([4,6,8]),r=rnd([2,3]),AE=rnd([3,4,5,6]);return G(`Cho DE ∥ BC với D thuộc AB, E thuộc AC. Biết AD = ${AD}, AB = ${AD*r}, AE = ${AE}. Độ dài AC bằng bao nhiêu?`,AE*r,[AE+AD*r-AD,AE*AD,AE/r],`Thalès: AD/AB = AE/AC nên AC = AE·AB/AD = ${AE*r}.`)},
+()=>{const a=ri(2,9),p=rnd([1,2,3,5]),sg1=rnd([1,-1]);return G(`Phân thức ${p}/(x ${sg(sg1*a)} ${a}) xác định khi nào?`,`x ≠ ${-sg1*a}`,[`x ≠ ${sg1*a}`,`x = ${-sg1*a}`,'x ≠ 0',`x ≠ ${a*a}`],`Mẫu x ${sg(sg1*a)} ${a} phải khác 0 nên x ≠ ${-sg1*a}.`)},
+()=>{const a=ri(2,9),k=ri(0,2),f=[[`(x² − ${a*a})/(x − ${a})`,`x + ${a}`,[`x − ${a}`,`x² + ${a*a}`,`x + ${a*a}`,`${a}x`]],[`(x² + ${2*a}x + ${a*a})/(x + ${a})`,`x + ${a}`,[`x − ${a}`,`x + ${2*a}`,`x² + ${a}`,`${a}x`]],[`(x² − ${2*a}x + ${a*a})/(x − ${a})`,`x − ${a}`,[`x + ${a}`,`x − ${2*a}`,`x² − ${a}`,`${a}x`]]][k];return G(`Rút gọn phân thức ${f[0]}.`,f[1],f[2],`Phân tích tử thành nhân tử rồi triệt tiêu nhân tử chung, kết quả là ${f[1]}.`)}];
+function best(k,v){try{if(v!=null)localStorage.setItem('toan'+k,v);return +localStorage.getItem('toan'+k)||0}catch(e){return 0}}
+function chp(box,items,cur,set){const b=$(box);b.innerHTML='';items.forEach(([k,l])=>{const x=document.createElement('button');x.className='chip';x.textContent=l;x.setAttribute('aria-pressed',k==cur());x.onclick=()=>{set(k);chp(box,items,cur,set)};b.appendChild(x)})}
+function begin(){const st=Q.filter(q=>qt=='a'||q[0]==qt),g=()=>rnd(GEN)();let l;
+if(qt=='c')l=Array.from({length:qn},g);else if(qt=='a'){const k=Math.round(qn*.3);l=[...shuf(st).slice(0,qn-k),...Array.from({length:k},g)]}else l=shuf(st).slice(0,qn);
+qs=shuf(l);qi=0;sc=0;qrun=true;qz()}
+function qz(){const el=$('#quiz');
+if(!qrun){curTest=null;el.innerHTML=`<h3>Luyện tập ngẫu nhiên 🎲</h3><p class="hint">Mỗi lần bấm Bắt đầu, câu hỏi và thứ tự đáp án đều được xáo trộn. Câu tính toán tự sinh số liệu mới nên không bao giờ trùng.</p><b>Chủ đề</b><div class="chips" id="qc"></div><p style="margin:8px 0 4px"><b>Số câu</b></p><div class="chips" id="qn"></div><div class="row"><button class="btn" id="go">Bắt đầu 🚀</button></div><p class="hint">Kho hiện có ${Q.length} câu soạn sẵn và không giới hạn câu tính toán tự sinh.</p>`;
+chp('#qc',Object.entries(ST),()=>qt,k=>qt=k);chp('#qn',[[10,'10 câu'],[20,'20 câu'],[30,'30 câu']],()=>qn,k=>qn=+k);$('#go').onclick=begin;return}
+if(qi>=qs.length){const bk=qt=='test'?'t'+curTest:qt,b=Math.max(best(bk),sc);best(bk,b);
+el.innerHTML=`<h3>Bạn đúng ${sc}/${qs.length} câu</h3><p>${sc==qs.length?'Tuyệt vời, giỏi Toán quá! 🏆':sc>=qs.length*.7?'Khá lắm! Ôn thêm chút nữa là hoàn hảo.':'Đừng nản, xem lại bài học rồi thử bộ câu khác nhé.'}</p><p class="hint">Điểm cao nhất ${qt=='test'?'của bài kiểm tra này':'ở chủ đề '+ST[qt]}: ${b}</p><div class="row"><button class="btn" id="ag">Bộ câu khác 🔀</button><button class="btn alt" id="bk2">Đổi chủ đề</button></div>`;
+if(sc==qs.length)spawn('🎉',10);const pct=sc/qs.length*100;
+save(curExam?'exam-'+curExam:qt=='test'?'test-'+(curTest+1):'quiz-'+qt,sc,qs.length,(!!P.get('quiz')||!!P.get('test')||!!P.get('exam'))&&pct>=PASS).then(m=>{if(qi>=qs.length&&qrun)el.insertAdjacentHTML('beforeend',`<p class="hint">${esc(m)}${(P.get('quiz')||P.get('test')||P.get('exam'))&&pct<PASS?` Cần đạt ${PASS}% để hoàn thành bài được giao. Thử bộ câu khác nhé!`:''}</p>`)});$('#ag').onclick=begin;$('#bk2').onclick=()=>{qrun=false;curTest=null;qz()};return}
+const q=qs[qi];el.innerHTML=`<div class="bar"><i style="width:${qi/qs.length*100}%"></i></div><p class="hint">${ST[qt]||'Kiểm tra bài '+(curTest+1)} – câu ${qi+1}/${qs.length}</p><h3>${sub(q[1])}</h3>`+q[2].map((o,i)=>[o,i]).sort(()=>Math.random()-.5).map(([o,i])=>`<button class="opt" data-i="${i}">${sub(o)}</button>`).join('')+'<div id="fb"></div>';
+el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;
+el.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(+x.dataset.i===q[3])x.classList.add('ok')});
+if(i===q[3]){sc++;spawn('⭐',5)}else b.classList.add('no');
+$('#fb').innerHTML=`<div class="why"><b>${i===q[3]?'Chính xác! 🎉':'Chưa đúng 😅'}</b> ${sub(q[4])}</div><div class="row"><button class="btn" id="nx">${qi==qs.length-1?'Xem kết quả':'Câu tiếp'}</button></div>`;
+$('#nx').onclick=()=>{qi++;qz()}})}
+
+function begin(){if(curTest!=null)return lessonTest(curTest);const S=shuf(Q),l=[],seen=new Set();let tr=0;
+while(l.length<qn&&tr++<qn*8){const t=qt=='a'?(Math.random()<.5?'l':'c'):qt;
+const q=(t=='l'&&S.length)?S.pop():rnd(GC)();if(seen.has(q[1]))continue;seen.add(q[1]);l.push(q)}
+qs=l;qi=0;sc=0;qrun=true;qz()}
+const QX={1:[['l','Phân thức A/B có nghĩa khi nào?',['B ≠ 0', 'A ≠ 0', 'A·B ≠ 0', 'A > B'],0,'Mẫu thức phải khác 0.'],
+['l','Muốn cộng hai phân thức khác mẫu, ta phải làm gì trước?',['Quy đồng mẫu thức', 'Nhân hai tử thức', 'Đổi dấu hai mẫu', 'Rút gọn từng mẫu'],0,'Quy đồng mẫu rồi cộng các tử.'],
+['l','Chia phân thức A/B cho C/D (C ≠ 0) bằng:',['(A/B)·(D/C)', '(A/B)·(C/D)', '(B/A)·(C/D)', '(A·C)/(B·D)'],0,'Nhân với phân thức nghịch đảo của số chia.'],
+['l','Hai phân thức A/B và C/D bằng nhau khi:',['A·D = B·C', 'A·C = B·D', 'A + D = B + C', 'A·B = C·D'],0,'Hai tích chéo bằng nhau.'],
+['l','Để rút gọn phân thức ta cần:',['Phân tích tử và mẫu thành nhân tử rồi bỏ nhân tử chung', 'Cộng cả tử và mẫu với cùng một số', 'Bình phương cả tử và mẫu', 'Đổi chỗ tử và mẫu'],0,'Chia cả tử và mẫu cho nhân tử chung.']],
+4:[['l','Hình bình hành có tính chất nào sau đây?',['Hai đường chéo cắt nhau tại trung điểm mỗi đường', 'Hai đường chéo bằng nhau', 'Hai đường chéo vuông góc', 'Bốn góc vuông'],0,'Đó là tính chất đường chéo của hình bình hành.'],
+['l','Hình chữ nhật có hai đường chéo:',['Bằng nhau và cắt nhau tại trung điểm', 'Vuông góc với nhau', 'Không bằng nhau', 'Song song với nhau'],0,'Hai đường chéo hình chữ nhật bằng nhau.'],
+['l','Tứ giác có bốn cạnh bằng nhau là:',['Hình thoi', 'Hình thang', 'Hình chữ nhật', 'Hình thang cân'],0,'Hình thoi có bốn cạnh bằng nhau.'],
+['l','Hình thoi có hai đường chéo:',['Vuông góc với nhau', 'Bằng nhau', 'Song song với nhau', 'Không cắt nhau'],0,'Đường chéo hình thoi vuông góc và là phân giác của các góc.'],
+['l','Tam giác có ba cạnh 6, 8, 10 là tam giác gì?',['Tam giác vuông', 'Tam giác nhọn', 'Tam giác tù', 'Tam giác đều'],0,'6² + 8² = 10² nên theo định lí Pythagore đảo đó là tam giác vuông.'],
+['l','Hình vuông là hình:',['Vừa là hình chữ nhật vừa là hình thoi', 'Chỉ là hình thoi', 'Chỉ là hình chữ nhật', 'Là hình thang cân'],0,'Hình vuông có bốn góc vuông và bốn cạnh bằng nhau.']],
+5:[['l','Nếu ΔABC ∽ ΔDEF theo tỉ số k thì tỉ số diện tích bằng:',['k²', 'k', '2k', '√k'],0,'Tỉ số diện tích bằng bình phương tỉ số đồng dạng.'],
+['l','Hai tam giác đồng dạng theo trường hợp g.g khi:',['Có hai cặp góc bằng nhau', 'Có hai cặp cạnh bằng nhau', 'Có một cặp góc bằng nhau', 'Có chu vi bằng nhau'],0,'Hai cặp góc bằng nhau thì đồng dạng (g.g).'],
+['l','AD là đường phân giác trong của tam giác ABC (D thuộc BC). Hệ thức đúng là:',['DB/DC = AB/AC', 'DB/DC = AC/AB', 'DB = DC', 'AD = BD'],0,'Tính chất đường phân giác: DB/DC = AB/AC.'],
+['l','Tỉ số chu vi của hai tam giác đồng dạng theo tỉ số k là:',['k', 'k²', '1/k', '2k'],0,'Chu vi tỉ lệ với tỉ số đồng dạng.'],
+['l','Định lí Thalès đảo: nếu AD/AB = AE/AC thì:',['DE ∥ BC', 'DE ⊥ BC', 'DE = BC', 'AD = AE'],0,'Các đoạn thẳng tương ứng tỉ lệ thì đường thẳng song song với cạnh còn lại.'],
+['l','Hai tam giác vuông đồng dạng khi có:',['Một cặp góc nhọn bằng nhau', 'Một cặp cạnh bằng nhau', 'Cùng chu vi', 'Cùng diện tích'],0,'Hai tam giác vuông có một cặp góc nhọn bằng nhau thì đồng dạng.']],
+7:[['l','Điều kiện để √A có nghĩa là:',['A ≥ 0', 'A > 0', 'A ≤ 0', 'A ≠ 0'],0,'Biểu thức dưới dấu căn bậc hai phải không âm.'],
+['l','√(a·b) = √a·√b khi:',['a ≥ 0 và b ≥ 0', 'a và b bất kì', 'a < 0 và b < 0', 'a = b'],0,'Quy tắc nhân các căn bậc hai áp dụng khi hai số không âm.'],
+['l','√49 bằng:',['7', '−7', '±7', '24,5'],0,'Căn bậc hai số học là số không âm.'],
+['l','∛(−8) bằng:',['−2', '2', '−4', 'Không tồn tại'],0,'Căn bậc ba xác định với mọi số thực: (−2)³ = −8.'],
+['l','Trục căn thức ở mẫu của 1/√3 ta được:',['√3/3', '√3', '1/3', '3√3'],0,'Nhân tử và mẫu với √3.']],
+8:[['l','Hệ x + y = 3 và x − y = 1 có nghiệm (x; y) là:',['(2; 1)', '(1; 2)', '(3; 0)', '(0; 3)'],0,'Cộng hai phương trình: 2x = 4 nên x = 2, y = 1.'],
+['l','Hệ x + y = 2 và 2x + 2y = 4 có bao nhiêu nghiệm?',['Vô số nghiệm', 'Một nghiệm', 'Vô nghiệm', 'Hai nghiệm'],0,'Hai phương trình tương đương nhau nên có vô số nghiệm.'],
+['l','Hệ x + y = 1 và x + y = 3 có bao nhiêu nghiệm?',['Vô nghiệm', 'Một nghiệm', 'Vô số nghiệm', 'Hai nghiệm'],0,'Hai đường thẳng song song nên hệ vô nghiệm.'],
+['l','Phương pháp cộng đại số dùng để:',['Khử bớt một ẩn bằng cách cộng hoặc trừ hai vế', 'Nhân hai phương trình với nhau', 'Bình phương hai vế', 'Đổi chỗ hai ẩn'],0,'Cộng hoặc trừ hai phương trình để mất một ẩn.']],
+11:[['l','Trong tam giác vuông, cos của góc nhọn bằng:',['Cạnh kề / cạnh huyền', 'Cạnh đối / cạnh huyền', 'Cạnh đối / cạnh kề', 'Cạnh kề / cạnh đối'],0,'cos = kề / huyền.'],
+['l','tan của góc nhọn bằng:',['Cạnh đối / cạnh kề', 'Cạnh kề / cạnh đối', 'Cạnh đối / cạnh huyền', 'Cạnh kề / cạnh huyền'],0,'tan = đối / kề.'],
+['l','Với góc nhọn α, sin²α + cos²α bằng:',['1', '0', '2', 'sin 2α'],0,'Đây là hệ thức cơ bản: sin²α + cos²α = 1.'],
+['l','Tam giác ABC vuông tại A có đường cao AH. Hệ thức nào sau đây đúng?',['AH·BC = AB·AC', 'AH = AB + AC', 'AH² = AB² + AC²', 'AH·AB = AC·BC'],0,'Diện tích tam giác tính theo hai cách: a·h = b·c.']],
+13:[['l','Công thức thể tích hình trụ là:',['V = πr²h', 'V = ⅓πr²h', 'V = 2πrh', 'V = ⁴⁄₃πr³'],0,'Thể tích hình trụ bằng diện tích đáy nhân chiều cao.'],
+['l','Công thức diện tích xung quanh hình trụ là:',['2πrh', 'πrh', 'πr²h', '2πr²'],0,'Diện tích xung quanh = chu vi đáy × chiều cao.'],
+['l','Công thức thể tích hình nón là:',['V = ⅓πr²h', 'V = πr²h', 'V = πrl', 'V = ⁴⁄₃πr³'],0,'Thể tích hình nón bằng một phần ba thể tích hình trụ cùng đáy, cùng chiều cao.'],
+['l','Diện tích xung quanh hình nón là:',['πrl', '2πrl', 'πr²l', '⅓πrl'],0,'S xq = πrl với l là đường sinh.'],
+['l','Diện tích mặt cầu bán kính R là:',['4πR²', 'πR²', '2πR²', '⁴⁄₃πR²'],0,'S = 4πR².'],
+['l','Hình nón có bán kính đáy r, chiều cao h thì đường sinh l bằng:',['√(r² + h²)', 'r + h', '√(h² − r²)', 'r·h'],0,'Tam giác vuông tạo bởi r, h, l: l² = r² + h².']]};
+const LT=[{s:[0,1],g:[1,2]},{s:[],g:[17,18]},{s:[2,3,4],g:[3,4]},{s:[15],g:[0,15]},{s:[5],g:[5]},{s:[6],g:[16]},{s:[16],g:[13]},{s:[7],g:[6]},{s:[],g:[9]},{s:[8,9],g:[7,8]},{s:[10],g:[14]},{s:[11,12],g:[10]},{s:[13,14],g:[11]},{s:[],g:[12]}];
+function lessonTest(i){const T=LT[i],pool=[...(EXQ||[]).filter(r=>r.lesson===i+1).map(exQ),...T.s.map(k=>Q[k]),...(QX[i]||[])],l=[],seen=new Set();
+for(const q of shuf(pool)){if(l.length>=12)break;if(!seen.has(q[1])){seen.add(q[1]);l.push(q)}}
+for(let tr=0;l.length<20&&tr<600;tr++){const q=GC[rnd(T.g)]();if(!seen.has(q[1])){seen.add(q[1]);l.push(q)}}
+for(const q of shuf(pool)){if(l.length>=20)break;if(!seen.has(q[1])){seen.add(q[1]);l.push(q)}}
+qs=shuf(l).map(q=>q);qt='test';curTest=i;qn=qs.length;qi=0;sc=0;qrun=true;document.querySelector('nav [data-t=t3]').click();qz();window.scrollTo(0,0)}
+/* ===== Đề thi thật (cần bảng exam_questions; hệ thống mới chưa có nên mục này sẽ trống) ===== */
+const SUBJECT='Toán';let EXQ=null,EXA=null,curExam=null;ST.x='Đề thi thật';
+async function exLoad(){if(EXQ)return EXQ;if(!sb)return EXQ=[];try{const r=await sb.from('exam_questions').select('id,exam_id,lesson,q,options,answer,explain').eq('subject',SUBJECT).eq('status','approved');EXQ=r.data||[]}catch(e){EXQ=[]}return EXQ}
+const exQ=r=>{const o=[...r.options],c=o.splice(r.answer,1)[0];return ['x',r.q,[c,...o],0,r.explain||'']};
+function exMsg(t){qrun=false;$('#quiz').innerHTML=`<p>${t}</p><div class="row"><button class="btn alt" id="exb">← Quay lại</button></div>`;$('#exb').onclick=()=>{qrun=false;qz()}}
+async function examBegin(){curExam=null;$('#quiz').innerHTML='<p class="hint">Đang tải đề…</p>';await exLoad();if(!EXQ.length)return exMsg('Chưa có câu hỏi từ đề thi nào được duyệt cho môn này, hoặc bạn chưa đăng nhập.');qs=shuf(EXQ).slice(0,qn).map(exQ);qi=0;sc=0;qrun=true;qz()}
+function examRun(){qs=shuf(EXA).map(exQ);qi=0;sc=0;qrun=true;qz()}
+const _begin=begin;begin=function(){if(qt=='x')return curExam&&EXA?examRun():examBegin();curExam=null;return _begin()};
+const _assigned=assigned;
+assigned=async function(){const id=+P.get('exam');if(!id)return _assigned();const a=$('#asg');a.style.display='block';a.innerHTML='📌 <b>Bài được giao:</b> đang tải đề thi…';
+let L=[];try{const r=await sb.from('exam_questions').select('id,exam_id,lesson,q,options,answer,explain,position').eq('exam_id',id).eq('status','approved').order('position');L=r.data||[]}catch(e){}
+if(!L.length){a.innerHTML='📌 <b>Bài được giao:</b> chưa tải được đề (chưa có câu được duyệt hoặc chưa đăng nhập).';return}
+EXA=L;curExam=id;qt='x';a.innerHTML=`📌 <b>Bài được giao:</b> làm đề thi (${L.length} câu), cần đạt ${PASS}% để hoàn thành.`;document.querySelector('nav [data-t=t3]').click();examRun()};
+setTimeout(exLoad,900);
+function assigned(){const b=+P.get('bai'),k=P.get('kn'),q=P.get('quiz'),a=$('#asg'),go=t=>document.querySelector(`nav [data-t=${t}]`).click(),
+dn=id=>`<div class="row"><button class="btn" onclick="finish(this,'${id}')">✅ Mình đã học xong</button></div><p class="hint"></p>`,
+bn=t=>{a.style.display='block';a.innerHTML='📌 <b>Bài được giao:</b> '+t};
+const tt=+P.get('test');if(tt&&LS[tt-1]){bn(`Kiểm tra bài ${tt}. ${esc(LS[tt-1][1])} (20 câu, cần đạt ${PASS}%)`);lessonTest(tt-1)}else if(b&&LS[b-1]){bn(`Bài ${b}. ${esc(LS[b-1][1])}`);const d=$('#les').querySelectorAll('details')[b-1];d.open=true;d.insertAdjacentHTML('beforeend',dn('bai-'+b));go('t0');setTimeout(()=>d.scrollIntoView(),60)}
+else if(k&&k.length==1&&'ABCDE'.includes(k)){const i='ABCDE'.indexOf(k),d=[...$('#sk').children].filter(x=>x.tagName=='DETAILS')[i];bn(`${k}. ${SKL[i]}`);d.open=true;d.insertAdjacentHTML('beforeend',dn('kn-'+k));go('t2');setTimeout(()=>d.scrollIntoView(),60)}
+else if(q&&ST[q]){qt=q;qn=+P.get('n')||10;bn(`làm ${qn} câu ${ST[q]}, cần đạt ${PASS}% để hoàn thành.`);go('t3');begin()}}
+function topicName(t){const [k,v]=t.split('-');return k=='exam'?'Đề thi #'+v:k=='test'?'Kiểm tra bài '+v+(LS[v-1]?': '+LS[v-1][1]:''):k=='bai'?'Bài '+v+(LS[v-1]?': '+LS[v-1][1]:''):k=='kn'?v+'. '+(SKL['ABCDE'.indexOf(v)]||''):'Luyện '+(ST[v]||v)}
+async function rs(){const el=$('#rs');
+if(!sb||!ME){el.innerHTML='<h3>Kết quả</h3><p class="hint">Đăng nhập (qua Việc nhà) để xem kết quả. Phụ huynh xem được cả điểm của các bạn trong nhà.</p>';return}
+el.innerHTML='<p class="hint">Đang tải…</p>';
+try{const {data,error}=await sb.from('subject_scores').select('*').eq('subject',SUBJ).order('updated_at',{ascending:false}).limit(40);if(error)throw error;
+el.innerHTML='<h3>Kết quả gần đây</h3>'+((data||[]).map(r=>`<p style="margin:8px 0"><b>${esc(MEM[r.user_id]||'Ai đó')}</b> · ${esc(topicName(r.item))}${/^(bai|kn)-/.test(r.item)?' · ✅ đã học':` · <b>${r.score}/${r.max}</b>`}<br><span class="hint">${new Date(r.updated_at).toLocaleString('vi-VN')}</span></p>`).join('')||'<p class="hint">Chưa có kết quả nào.</p>')}catch(e){el.innerHTML='<p class="hint">Không tải được: '+esc(e.message)+'</p>'}}
+document.querySelector('[data-t=t4]').addEventListener('click',rs);
+qz();assigned();acct();
+</script></body></html>

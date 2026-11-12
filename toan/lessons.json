@@ -1,0 +1,185 @@
+{
+ "subject": "Toán",
+ "lessons": [
+  {
+   "g": "Toán 8",
+   "t": "Bài 1. Hằng đẳng thức và phân tích đa thức",
+   "q": "bai=1"
+  },
+  {
+   "g": "Toán 8",
+   "t": "Bài 2. Phân thức đại số",
+   "q": "bai=2"
+  },
+  {
+   "g": "Toán 8",
+   "t": "Bài 3. Hàm số bậc nhất y = ax + b",
+   "q": "bai=3"
+  },
+  {
+   "g": "Toán 8",
+   "t": "Bài 4. Phương trình và bất phương trình bậc nhất",
+   "q": "bai=4"
+  },
+  {
+   "g": "Toán 8",
+   "t": "Bài 5. Định lí Pythagore và tứ giác",
+   "q": "bai=5"
+  },
+  {
+   "g": "Toán 8",
+   "t": "Bài 6. Định lí Thalès và tam giác đồng dạng",
+   "q": "bai=6"
+  },
+  {
+   "g": "Toán 8",
+   "t": "Bài 7. Thống kê và xác suất",
+   "q": "bai=7"
+  },
+  {
+   "g": "Toán 9",
+   "t": "Bài 8. Căn bậc hai và căn bậc ba",
+   "q": "bai=8"
+  },
+  {
+   "g": "Toán 9",
+   "t": "Bài 9. Hệ hai phương trình bậc nhất hai ẩn",
+   "q": "bai=9"
+  },
+  {
+   "g": "Toán 9",
+   "t": "Bài 10. Phương trình bậc hai và định lí Viète",
+   "q": "bai=10"
+  },
+  {
+   "g": "Toán 9",
+   "t": "Bài 11. Hàm số y = ax²",
+   "q": "bai=11"
+  },
+  {
+   "g": "Toán 9",
+   "t": "Bài 12. Hệ thức lượng trong tam giác vuông",
+   "q": "bai=12"
+  },
+  {
+   "g": "Toán 9",
+   "t": "Bài 13. Đường tròn",
+   "q": "bai=13"
+  },
+  {
+   "g": "Toán 9",
+   "t": "Bài 14. Hình trụ, hình nón, hình cầu",
+   "q": "bai=14"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 1. Hằng đẳng thức và phân tích đa thức",
+   "q": "test=1&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 2. Phân thức đại số",
+   "q": "test=2&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 3. Hàm số bậc nhất y = ax + b",
+   "q": "test=3&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 4. Phương trình và bất phương trình bậc nhất",
+   "q": "test=4&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 5. Định lí Pythagore và tứ giác",
+   "q": "test=5&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 6. Định lí Thalès và tam giác đồng dạng",
+   "q": "test=6&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 7. Thống kê và xác suất",
+   "q": "test=7&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 8. Căn bậc hai và căn bậc ba",
+   "q": "test=8&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 9. Hệ hai phương trình bậc nhất hai ẩn",
+   "q": "test=9&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 10. Phương trình bậc hai và định lí Viète",
+   "q": "test=10&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 11. Hàm số y = ax²",
+   "q": "test=11&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 12. Hệ thức lượng trong tam giác vuông",
+   "q": "test=12&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 13. Đường tròn",
+   "q": "test=13&pass=70"
+  },
+  {
+   "g": "Kiểm tra 20 câu (cần đạt 70%)",
+   "t": "Kiểm tra bài 14. Hình trụ, hình nón, hình cầu",
+   "q": "test=14&pass=70"
+  },
+  {
+   "g": "Công cụ thực hành",
+   "t": "A. Giải phương trình bậc hai",
+   "q": "kn=A"
+  },
+  {
+   "g": "Công cụ thực hành",
+   "t": "B. Vẽ đồ thị hàm số",
+   "q": "kn=B"
+  },
+  {
+   "g": "Công cụ thực hành",
+   "t": "C. Giải hệ hai phương trình",
+   "q": "kn=C"
+  },
+  {
+   "g": "Công cụ thực hành",
+   "t": "D. Tam giác vuông",
+   "q": "kn=D"
+  },
+  {
+   "g": "Công cụ thực hành",
+   "t": "E. Rút gọn căn bậc hai",
+   "q": "kn=E"
+  },
+  {
+   "g": "Luyện câu hỏi (cần đạt 70%)",
+   "t": "Luyện 10 câu: Tất cả",
+   "q": "quiz=a&n=10&pass=70"
+  },
+  {
+   "g": "Luyện câu hỏi (cần đạt 70%)",
+   "t": "Luyện 10 câu: Lý thuyết",
+   "q": "quiz=l&n=10&pass=70"
+  },
+  {
+   "g": "Luyện câu hỏi (cần đạt 70%)",
+   "t": "Luyện 10 câu: Tính toán",
+   "q": "quiz=c&n=10&pass=70"
+  }
+ ]
+}
