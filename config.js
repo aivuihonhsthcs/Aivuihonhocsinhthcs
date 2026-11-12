@@ -7,7 +7,8 @@ window.APP_CONFIG = {
   SUBJECTS: [ // web môn học riêng. key = tên môn trong màn hình Giao việc (Toán, Lý, Hoá, Anh, Tin)
     // lessons = địa chỉ file lessons.json (danh sách bài) nằm trong repo của môn đó
     { key: "Hoá", name: "Hoá học vui", icon: "🧪", url: "https://hoa-hoc-nine.vercel.app", lessons: "https://hoa-hoc-nine.vercel.app/lessons.json" },
-    { key: "Anh", name: "Tiếng Anh vui", icon: "🗣️", url: "https://aivuihonhocsinhthcs.vercel.app/tieng-anh", lessons: "https://aivuihonhocsinhthcs.vercel.app/tieng-anh/lessons.json" }
+    { key: "Anh", name: "Tiếng Anh vui", icon: "🗣️", url: "https://aivuihonhocsinhthcs.vercel.app/tieng-anh", lessons: "https://aivuihonhocsinhthcs.vercel.app/tieng-anh/lessons.json" },
+    { key: "Toán", name: "Toán vui", icon: "➗", url: "https://aivuihonhocsinhthcs.vercel.app/toan", lessons: "https://aivuihonhocsinhthcs.vercel.app/toan/lessons.json" }
     // { key: "Toán", name: "Toán vui", icon: "📐", url: "https://...", lessons: "https://.../lessons.json" },
   ],
   ZALO_BOT_URL: ""                            // link mở bot Zalo (để trống nếu chưa có)
